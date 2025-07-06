@@ -1,3 +1,8 @@
+Sure, I'll help you adjust the image position. To center the image in your Streamlit app, you need to modify the CSS for the `.bg-image` class. Instead of `left: 0; top: 0;`, you can use `left: 50%; top: 50%; transform: translate(-50%, -50%);` to center it both horizontally and vertically.
+
+Here's the updated CSS for the image:
+
+```python
 import streamlit as st
 import random
 import time
@@ -55,7 +60,16 @@ div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
 div[data-baseweb="select"] * { color: #000000; fill: #000000; }
 button p { color: #000000; font-weight: bold; }
 .container { position: relative; width: 100%; height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #1a1a1a; }
-.bg-image { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; object-fit: cover; z-index: 0; }
+.bg-image {
+    position: absolute;
+    left: 50%; /* 중앙 정렬 */
+    top: 50%; /* 중앙 정렬 */
+    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+}
 .speech-bubble {
     position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
     width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
@@ -459,3 +473,4 @@ elif st.session_state.step == 9:
     if st.button("다시 시작하기"):
         st.session_state.reset_game = True
         st.rerun()
+```
