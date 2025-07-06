@@ -1,8 +1,3 @@
-Sure, I'll help you adjust the image position. To center the image in your Streamlit app, you need to modify the CSS for the `.bg-image` class. Instead of `left: 0; top: 0;`, you can use `left: 50%; top: 50%; transform: translate(-50%, -50%);` to center it both horizontally and vertically.
-
-Here's the updated CSS for the image:
-
-```python
 import streamlit as st
 import random
 import time
@@ -60,16 +55,30 @@ div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
 div[data-baseweb="select"] * { color: #000000; fill: #000000; }
 button p { color: #000000; font-weight: bold; }
 .container { position: relative; width: 100%; height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #1a1a1a; }
+
+/* 기본 배경 이미지 스타일 (전체 화면) */
 .bg-image {
     position: absolute;
-    left: 50%; /* 중앙 정렬 */
-    top: 50%; /* 중앙 정렬 */
-    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100vh;
     object-fit: cover;
     z-index: 0;
 }
+
+/* 첫 번째 특정 이미지 (talking ceo.png)를 위한 중앙 정렬 스타일 */
+.bg-image.centered {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto; /* 이미지 원본 비율 유지 */
+    height: 100vh; /* 높이를 화면에 맞추고 */
+    max-width: 100%; /* 너비가 화면을 넘지 않도록 */
+    object-fit: contain; /* 비율 유지하며 이미지 전체 보이도록 */
+}
+
 .speech-bubble {
     position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
     width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
@@ -85,9 +94,11 @@ button p { color: #000000; font-weight: bold; }
 # ✅ 말풍선 출력 함수
 def show_speech(title: str, subtitle: str, image_url: str):
     """말풍선과 배경 이미지를 포함한 UI를 렌더링합니다."""
+    # 특정 이미지 URL에 따라 클래스를 다르게 적용
+    image_class = "bg-image centered" if "talking ceo.png" in image_url else "bg-image"
     st.markdown(f"""
     <div class="container">
-        <img src="{image_url}" class="bg-image">
+        <img src="{image_url}" class="{image_class}">
         <div class="speech-bubble">
             <div class="speech-title">{title}</div>
             <div class="speech-sub">{subtitle}</div>
@@ -353,15 +364,11 @@ elif st.session_state.step == 7:
         st.info(f"누적 점수: **{st.session_state.score}점**")
 
         # Step 7 관련 세션 상태 정리
-        # ✅ 이 부분에서 step7_state를 "pending"으로 초기화하면 안 됩니다.
-        # "다음 이벤트" 버튼 클릭 시 바로 다음 스텝으로 넘어가야 하므로
-        # 다음 스텝(step 8)으로 넘어간 후에 step7_state가 "pending"으로 초기화되도록 처리해야 합니다.
         if "step7_score_earned" in st.session_state:
             del st.session_state.step7_score_earned
         if "step7_strategy_selected" in st.session_state:
             del st.session_state.step7_strategy_selected
         st.session_state.selected_strategy_feedback = "" # 사용 후 초기화
-        # st.session_state.step7_state = "pending" # 🚨 여기서 초기화하면 반복됩니다!
 
         if st.button("다음 이벤트 ▶️"):
             st.session_state.step = 8 # 다음 스텝으로 변경
@@ -440,7 +447,6 @@ elif st.session_state.step == 8:
         st.session_state.current_event_options = []
         st.session_state.current_event_best_strategy = ""
         st.session_state.selected_strategy_feedback = ""
-        # st.session_state.step8_state = "pending" # 🚨 여기서 초기화하면 반복됩니다!
 
         if st.button("최종 결과 확인 ▶️"):
             st.session_state.step = 9
@@ -473,4 +479,3 @@ elif st.session_state.step == 9:
     if st.button("다시 시작하기"):
         st.session_state.reset_game = True
         st.rerun()
-```
