@@ -5,7 +5,6 @@ import time # time.sleep()을 위해 import
 # ✅ 세션 상태 초기화 함수
 def initialize_session_state():
     """Streamlit 세션 상태를 초기화하거나 재설정합니다."""
-    # 모든 세션 키를 정의하여 초기화 및 재설정을 명확히 관리
     defaults = {
         "step": 0,
         "industry": "",
@@ -17,29 +16,28 @@ def initialize_session_state():
         "score": 0,
         "crisis_situation": "",
         "crisis_options": [],
-        "effective_strategies_map": {}, # Step 3의 정답 전략 매핑 (이름 변경)
-        "best_crisis_strategies_map": {}, # Step 5의 정답 전략 매핑 (이름 변경)
+        "effective_strategies_map": {}, # Step 3의 정답 전략 매핑
+        "best_crisis_strategies_map": {}, # Step 5의 정답 전략 매핑
         "random_events_data": {}, # Step 8의 이벤트 데이터
-        "step3_score_earned": 0, # Step 3에서 획득 점수
-        "step5_score_earned": 0, # Step 5에서 획득 점수
-        "step7_score_earned": 0, # Step 7에서 획득 점수
-        "step8_score_earned": 0, # Step 8에서 획득 점수
-        "step3_strategy_selected": "", # Step 3 선택 전략 기록
-        "step5_strategy_selected": "", # Step 5 선택 전략 기록
+        "step3_score_earned": 0,
+        "step5_score_earned": 0,
+        "step7_score_earned": 0,
+        "step8_score_earned": 0,
+        "step3_strategy_selected": "",
+        "step5_strategy_selected": "",
         "step7_strategy_selected": "", # Step 7 선택 전략 기록
-        "step8_strategy_selected": "", # Step 8 선택 전략 기록
-        "current_event_name": None, # Step 8 현재 이벤트 이름
-        "current_event_options": [], # Step 8 현재 이벤트 옵션
-        "current_event_best_strategy": "", # Step 8 현재 이벤트 최적 전략
-        "step7_state": "pending", # Step 7 진행 상태 관리
-        "step8_state": "pending", # Step 8 진행 상태 관리
+        "step8_strategy_selected": "",
+        "current_event_name": None,
+        "current_event_options": [],
+        "current_event_best_strategy": "",
+        "step7_state": "pending", # Step 7 진행 상태 관리 (pending/done)
+        "step8_state": "pending", # Step 8 진행 상태 관리 (pending/done)
     }
 
-    # 게임 재시작 시 기존 세션 상태를 모두 삭제하고 재초기화
     if st.session_state.get("reset_game", False):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        st.session_state.reset_game = False # 재설정 플래그 초기화
+        st.session_state.reset_game = False
 
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -51,81 +49,21 @@ initialize_session_state()
 # ✅ 공통 CSS 스타일 (한 번만 정의)
 st.markdown("""
 <style>
-/* 전체 배경 및 텍스트 색상 */
-body {
-    background-color: #1a1a1a;
-    color: #ffffff;
-}
-
-/* 기본 텍스트 요소 */
-h1, h2, h3, h4, h5, h6, label, p, span, div {
-    color: inherit;
-}
-
-/* selectbox 영역 - 흰 배경 + 검정 텍스트 */
-div[data-baseweb="select"] {
-    background-color: #ffffff;
-    color: #000000;
-}
-div[data-baseweb="select"] * {
-    color: #000000;
-    fill: #000000;
-}
-
-/* 버튼 안 텍스트 */
-button p {
-    color: #000000;
-    font-weight: bold;
-}
-
-/* 전체 컨테이너와 배경 이미지 */
-.container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-}
-.bg-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 0;
-}
-
-/* 말풍선 스타일 */
+body { background-color: #1a1a1a; color: #ffffff; }
+h1, h2, h3, h4, h5, h6, label, p, span, div { color: inherit; }
+div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
+div[data-baseweb="select"] * { color: #000000; fill: #000000; }
+button p { color: #000000; font-weight: bold; }
+.container { position: relative; width: 100%; height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #1a1a1a; }
+.bg-image { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; object-fit: cover; z-index: 0; }
 .speech-bubble {
-    position: absolute;
-    bottom: 8vh;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 500px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px 25px;
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    z-index: 1;
-    backdrop-filter: blur(8px);
+    position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
+    width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
+    padding: 20px 25px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-align: center; z-index: 1; backdrop-filter: blur(8px);
 }
-
-/* 말풍선 내 제목/본문 */
-.speech-title {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #ffffff;
-}
-.speech-sub {
-    margin-top: 10px;
-    font-size: 1rem;
-    color: #f0f0f0;
-}
+.speech-title { font-size: 1.4rem; font-weight: bold; color: #ffffff; }
+.speech-sub { margin-top: 10px; font-size: 1rem; color: #f0f0f0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -204,7 +142,6 @@ elif st.session_state.step == 2:
 elif st.session_state.step == 3:
     show_speech("“예기치 못한 사건 발생!”", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
 
-    # Step 3 관련 데이터 정의 및 세션에 저장
     situations = {
         "⚠️ 대규모 고객 데이터 유출 발생": ["보안 시스템 전면 재구축", "PR 대응", "사과문 발표", "외부 컨설턴트 투입", "서비스 일시 중단"],
         "📈 갑작스러운 수요 폭증": ["생산 라인 확장", "기술 투자", "임시 고용 확대", "외주 활용", "품질 단가 조정"],
@@ -214,7 +151,7 @@ elif st.session_state.step == 3:
         "🏆 대기업으로부터 투자 제안": ["지분 일부 매각", "전략적 제휴", "거절", "조건 재협상", "지분 공동 소유"],
         "🌍 글로벌 시장 진출 기회": ["현지화 전략", "글로벌 광고 캠페인", "온라인 직판", "외국 파트너와 제휴", "해외 공장 설립"]
     }
-    effective_strategies_map_data = { # 이름 변경: effective_strategies_map_data
+    effective_strategies_map_data = {
         "⚠️ 대규모 고객 데이터 유출 발생": "보안 시스템 전면 재구축",
         "📈 갑작스러운 수요 폭증": "생산 라인 확장",
         "💸 원자재 가격 급등": "공급처 다변화",
@@ -223,7 +160,7 @@ elif st.session_state.step == 3:
         "🏆 대기업으로부터 투자 제안": "지분 일부 매각",
         "🌍 글로벌 시장 진출 기회": "현지화 전략"
     }
-    st.session_state.effective_strategies_map = effective_strategies_map_data # 세션에 저장
+    st.session_state.effective_strategies_map = effective_strategies_map_data
 
     if not st.session_state.situation:
         st.session_state.situation, st.session_state.options = random.choice(list(situations.items()))
@@ -233,9 +170,8 @@ elif st.session_state.step == 3:
     strategy = st.radio("🧠 당신의 전략은?", st.session_state.options)
 
     if st.button("전략 확정"):
-        st.session_state.step3_strategy_selected = strategy # 단계별 전략 기록
+        st.session_state.step3_strategy_selected = strategy
         
-        # 점수 계산 및 저장 (로컬 변수 사용 없이 직접 세션 상태에 접근)
         if strategy == st.session_state.effective_strategies_map.get(st.session_state.situation):
             st.session_state.score += 10
             st.session_state.step3_score_earned = 10
@@ -251,7 +187,6 @@ elif st.session_state.step == 3:
 # ---
 ## Step 4: 결과 분석 및 피드백
 elif st.session_state.step == 4:
-    # Step 3에서 저장된 정보를 활용하여 피드백
     score_earned_this_step = st.session_state.get("step3_score_earned", 0)
     selected_strategy_for_feedback = st.session_state.get("step3_strategy_selected", "선택 없음")
 
@@ -268,16 +203,14 @@ elif st.session_state.step == 4:
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
     st.info(f"현재 점수: **{st.session_state.score}점**")
 
-    # Step 3 관련 세션 상태 정리
     if "step3_score_earned" in st.session_state:
         del st.session_state.step3_score_earned
     if "step3_strategy_selected" in st.session_state:
         del st.session_state.step3_strategy_selected
     st.session_state.situation = ""
     st.session_state.options = []
-    st.session_state.selected_strategy_feedback = "" # 피드백 메시지 초기화
+    st.session_state.selected_strategy_feedback = ""
 
-    # 사용자 제어권 보장 (다음 버튼)
     if st.button("다음 이벤트 ▶️"):
         st.session_state.step = 5
         st.rerun()
@@ -287,7 +220,6 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     show_speech("“국가적 위기 발생!”", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
-    # Step 5 관련 데이터 정의
     crisis_situations = {
         "📉 한국 외환시장 급변 (원화 가치 급락)": ["환 헤지 강화", "수출 확대", "정부와 협력", "외환 보유 확대", "위기 커뮤니케이션"],
         "🇺🇸 미 연준의 기준금리 인상": ["대출 축소", "내수 집중 전략", "고금리 대비 자산 조정", "비용 구조 개선", "긴축 경영"],
@@ -296,16 +228,15 @@ elif st.session_state.step == 5:
         "🛃 주요 국가의 관세 인상 정책": ["무역 파트너 다변화", "현지 생산 확대", "비관세 수출 전략", "신시장 개척", "가격 재설정"]
     }
     
-    # 🚨 중요: best_strategies_map_data를 Step 5 진입 시 한 번만 정의하여 세션에 저장
     if "best_crisis_strategies_map" not in st.session_state or not st.session_state.best_crisis_strategies_map:
-        best_strategies_map_data = { # 이름 변경: best_strategies_map_data
+        best_strategies_map_data = {
             "📉 한국 외환시장 급변 (원화 가치 급락)": "환 헤지 강화",
             "🇺🇸 미 연준의 기준금리 인상": "고금리 대비 자산 조정",
             "🗳️ 정치적 불확실성 증가": "리스크 분산 경영",
-            "🇺🇸 트럼프 대통령 재취임": "공급망 재편", # 트럼프 재취임 시 '공급망 재편'이 가장 적절한 대응 전략으로 판단
+            "🇺🇸 트럼프 대통령 재취임": "공급망 재편",
             "🛃 주요 국가의 관세 인상 정책": "무역 파트너 다변화"
         }
-        st.session_state.best_crisis_strategies_map = best_strategies_map_data # 세션에 저장
+        st.session_state.best_crisis_strategies_map = best_strategies_map_data
 
     if not st.session_state.crisis_situation:
         st.session_state.crisis_situation, st.session_state.crisis_options = random.choice(list(crisis_situations.items()))
@@ -315,9 +246,8 @@ elif st.session_state.step == 5:
     crisis_strategy = st.radio("🧠 대응 전략을 선택하세요:", st.session_state.crisis_options)
 
     if st.button("전략 확정"):
-        st.session_state.step5_strategy_selected = crisis_strategy # ✅ 단계별 전략 기록
+        st.session_state.step5_strategy_selected = crisis_strategy
 
-        # 세션 상태에 저장된 best_crisis_strategies_map을 사용하여 점수 계산
         if crisis_strategy == st.session_state.best_crisis_strategies_map.get(st.session_state.crisis_situation):
             st.session_state.score += 10
             st.session_state.step5_score_earned = 10
@@ -327,20 +257,17 @@ elif st.session_state.step == 5:
             st.session_state.step5_score_earned = 5
             st.session_state.selected_strategy_feedback = f"국가적 위기 속 **{crisis_strategy}** 전략도 나쁘지 않았어. (획득 점수: 5점)"
 
-        # Step 6으로 이동. Step 6에서 다음 버튼이 있음.
         st.session_state.step = 6
         st.rerun()
 
 # ---
 ## Step 6: 중간 평가
 elif st.session_state.step == 6:
-    # Step 5에서 저장된 정보 활용
     score_earned_this_step = st.session_state.get("step5_score_earned", 0)
     selected_strategy_for_feedback = st.session_state.get("step5_strategy_selected", "선택 없음")
 
     if score_earned_this_step == 10:
         title = "“최고의 경영자군!”"
-        # subtitle은 Step 5에서 이미 세션에 저장된 feedback 메시지를 사용
         subtitle = st.session_state.selected_strategy_feedback + f" 총 점수: {st.session_state.score}점"
     else:
         title = "“괜찮은 성과지만 아직 성장 가능성이 보여.”"
@@ -351,15 +278,12 @@ elif st.session_state.step == 6:
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
     st.info(f"현재 점수: **{st.session_state.score}점**")
 
-    # Step 5 관련 세션 상태 정리
     if "step5_score_earned" in st.session_state:
         del st.session_state.step5_score_earned
     if "step5_strategy_selected" in st.session_state:
         del st.session_state.step5_strategy_selected
-    # crisis_situation, crisis_options는 Step 5에서 전략 확정 시 이미 초기화됨
-    st.session_state.selected_strategy_feedback = "" # 피드백 메시지 초기화
+    st.session_state.selected_strategy_feedback = ""
 
-    # 사용자 제어권 보장 (다음 버튼)
     if st.button("다음 이벤트 ▶️"):
         st.session_state.step = 7
         st.rerun()
@@ -375,8 +299,7 @@ elif st.session_state.step == 7:
         "🧘 그냥 기다린다": 2
     }
 
-    # Step 7의 상태를 별도로 관리하여 중복 실행 방지
-    # initialize_session_state()에서 기본값 "pending"으로 설정됨
+    # step7_state 초기화는 initialize_session_state()에서 처리됨
     if st.session_state.step7_state == "pending":
         show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 7: 내부 문제 해결 전략 선택")
@@ -384,27 +307,38 @@ elif st.session_state.step == 7:
         selected_org_strategy = st.radio("내부 문제를 해결할 전략을 선택하세요:", list(org_issues.keys()))
 
         if st.button("전략 확정"):
-            st.session_state.step7_strategy_selected = selected_org_strategy # 단계별 전략 기록
+            st.session_state.step7_strategy_selected = selected_org_strategy
             st.session_state.score += org_issues[selected_org_strategy]
             st.session_state.step7_score_earned = org_issues[selected_org_strategy]
 
             if st.session_state.step7_score_earned >= 8:
-                title = "“탁월한 내부 결정이었어!”"
+                title_prefix = "탁월한 내부 결정이었어!"
             elif st.session_state.step7_score_earned >= 5:
-                title = "“무난한 선택이었군.”"
+                title_prefix = "무난한 선택이었군."
             else:
-                title = "“기다리는 건 항상 좋은 선택은 아니지...”"
-            st.session_state.selected_strategy_feedback = f"{selected_org_strategy} 전략에 따른 점수: {st.session_state.step7_score_earned}점"
+                title_prefix = "기다리는 건 항상 좋은 선택은 아니지..."
+            
+            # 다음 스텝(피드백)을 위해 title_prefix와 상세 메시지를 selected_strategy_feedback에 저장
+            st.session_state.selected_strategy_feedback = (
+                f"“{title_prefix}”\n\n"
+                f"{selected_org_strategy} 전략에 따른 점수: {st.session_state.step7_score_earned}점"
+            )
 
-            st.session_state.step7_state = "done" # 상태 변경
-            st.rerun()
+            st.session_state.step7_state = "done" # 상태를 'done'으로 변경
+            st.rerun() # 변경된 상태를 반영하여 페이지 새로 고침 (피드백 화면으로 전환)
+
     elif st.session_state.step7_state == "done":
-        # 피드백 표시
-        title = st.session_state.selected_strategy_feedback.split('(')[0].strip() + "!" # 제목 추출
-        subtitle = st.session_state.selected_strategy_feedback + f" (누적 점수: {st.session_state.score}점)"
-        show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        # 피드백 화면
+        # selected_strategy_feedback에 저장된 제목과 내용 분리 (줄바꿈 문자로 구분)
+        feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
+        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
+        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
+        subtitle_bubble += f" (누적 점수: {st.session_state.score}점)"
 
-        st.success(f"전략: **{st.session_state.step7_strategy_selected}**")
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+
+        st.markdown("### Step 7: 내부 문제 해결 결과")
+        st.success(f"당신의 전략: **{st.session_state.step7_strategy_selected}**")
         st.info(f"누적 점수: **{st.session_state.score}점**")
 
         # Step 7 관련 세션 상태 정리
@@ -412,10 +346,9 @@ elif st.session_state.step == 7:
             del st.session_state.step7_score_earned
         if "step7_strategy_selected" in st.session_state:
             del st.session_state.step7_strategy_selected
-        st.session_state.selected_strategy_feedback = ""
-        st.session_state.step7_state = "pending" # 다음 게임을 위해 초기화
+        st.session_state.selected_strategy_feedback = "" # 사용 후 초기화
+        st.session_state.step7_state = "pending" # 다음 게임을 위해 상태 초기화
 
-        # 사용자 제어권 보장 (다음 버튼)
         if st.button("다음 이벤트 ▶️"):
             st.session_state.step = 8
             st.rerun()
@@ -423,8 +356,7 @@ elif st.session_state.step == 7:
 # ---
 ## Step 8: 돌발 변수 등장
 elif st.session_state.step == 8:
-    # Step 8 관련 데이터 정의 및 세션에 저장
-    if not st.session_state.random_events_data: # 한 번만 정의하도록 체크
+    if not st.session_state.random_events_data:
         st.session_state.random_events_data = {
             "📉 글로벌 경제 불황": {
                 "options": ["비용 절감", "내수 시장 집중", "긴축 재정 운영", "신사업 보류", "시장 철수"],
@@ -440,13 +372,11 @@ elif st.session_state.step == 8:
             }
         }
 
-    # Step 8의 상태를 별도로 관리하여 중복 실행 방지
-    # initialize_session_state()에서 기본값 "pending"으로 설정됨
     if st.session_state.step8_state == "pending":
         show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 8: 돌발 변수 등장")
 
-        if st.session_state.current_event_name is None: # 이벤트가 아직 선택되지 않았다면 새로 선택
+        if st.session_state.current_event_name is None:
             event_name, event_info = random.choice(list(st.session_state.random_events_data.items()))
             st.session_state.current_event_name = event_name
             st.session_state.current_event_options = event_info["options"]
@@ -456,31 +386,36 @@ elif st.session_state.step == 8:
         selected_event_strategy = st.radio("✅ 어떤 전략으로 대응할까요?", st.session_state.current_event_options)
 
         if st.button("전략 확정"):
-            st.session_state.step8_strategy_selected = selected_event_strategy # 단계별 전략 기록
+            st.session_state.step8_strategy_selected = selected_event_strategy
 
             if selected_event_strategy == st.session_state.current_event_best_strategy:
                 st.session_state.score += 10
                 st.session_state.step8_score_earned = 10
-                title = "“이번에도 잘 대처했군.”"
-                st.session_state.selected_strategy_feedback = f"{selected_event_strategy} 전략으로 10점 획득!"
+                title_prefix = "이번에도 잘 대처했군."
             else:
                 st.session_state.score += 5
                 st.session_state.step8_score_earned = 5
-                title = "“나쁘지 않은 대응이었어.”"
-                st.session_state.selected_strategy_feedback = f"{selected_event_strategy} 전략으로 5점 획득!"
+                title_prefix = "나쁘지 않은 대응이었어."
+            
+            st.session_state.selected_strategy_feedback = (
+                f"“{title_prefix}”\n\n"
+                f"{selected_event_strategy} 전략으로 {st.session_state.step8_score_earned}점 획득!"
+            )
 
-            st.session_state.step8_state = "done" # 상태 변경
+            st.session_state.step8_state = "done"
             st.rerun()
-    elif st.session_state.step8_state == "done":
-        # 피드백 표시
-        title = st.session_state.selected_strategy_feedback.split('으로')[0].strip() + "!" # 제목 추출
-        subtitle = st.session_state.selected_strategy_feedback + f" (총 점수: {st.session_state.score}점)"
-        show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
+    elif st.session_state.step8_state == "done":
+        feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
+        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
+        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
+        subtitle_bubble += f" (총 점수: {st.session_state.score}점)"
+
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("### Step 8: 돌발 변수 결과")
         st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
         st.info(f"총 점수: **{st.session_state.score}점**")
 
-        # Step 8 관련 세션 상태 정리
         if "step8_score_earned" in st.session_state:
             del st.session_state.step8_score_earned
         if "step8_strategy_selected" in st.session_state:
@@ -489,9 +424,8 @@ elif st.session_state.step == 8:
         st.session_state.current_event_options = []
         st.session_state.current_event_best_strategy = ""
         st.session_state.selected_strategy_feedback = ""
-        st.session_state.step8_state = "pending" # 다음 게임을 위해 초기화
+        st.session_state.step8_state = "pending"
 
-        # 사용자 제어권 보장 (다음 버튼)
         if st.button("최종 결과 확인 ▶️"):
             st.session_state.step = 9
             st.rerun()
@@ -501,9 +435,9 @@ elif st.session_state.step == 8:
 elif st.session_state.step == 9:
     final_score = st.session_state.score
     final_message = ""
-    image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png" # 기본 이미지
+    image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png"
 
-    if final_score >= 40: # 임의의 기준, 게임의 난이도에 따라 조정
+    if final_score >= 40:
         final_message = "“축하한다! 너는 최고의 경영자야. 우리 회사는 네 덕분에 크게 번창했어!”"
         title_bubble = "“위대한 성공!”"
     elif final_score >= 20:
@@ -512,7 +446,7 @@ elif st.session_state.step == 9:
     else:
         final_message = "“아쉽지만, 다음번엔 더 나은 결과를 기대해 볼게.”"
         title_bubble = "“재정비의 시간!”"
-        image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/sad_ceo.png" # 실패 시 다른 이미지 예시
+        image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/sad_ceo.png"
 
     show_speech(title_bubble, final_message, image_url)
     st.markdown("### Step 9: 게임 결과")
@@ -520,5 +454,5 @@ elif st.session_state.step == 9:
     st.success(f"당신의 최종 점수: **{final_score}점**")
 
     if st.button("다시 시작하기"):
-        st.session_state.reset_game = True # 재설정 플래그 설정
+        st.session_state.reset_game = True
         st.rerun()
