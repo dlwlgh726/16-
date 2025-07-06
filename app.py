@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import time # time.sleep()을 위해 import
+import time
 
 # ✅ 세션 상태 초기화 함수
 def initialize_session_state():
@@ -12,20 +12,20 @@ def initialize_session_state():
         "company_name": "",
         "situation": "",
         "options": [],
-        "selected_strategy_feedback": "", # 이전 단계의 선택된 전략 피드백용 (덮어쓰기 방지)
+        "selected_strategy_feedback": "",
         "score": 0,
         "crisis_situation": "",
         "crisis_options": [],
-        "effective_strategies_map": {}, # Step 3의 정답 전략 매핑
-        "best_crisis_strategies_map": {}, # Step 5의 정답 전략 매핑
-        "random_events_data": {}, # Step 8의 이벤트 데이터
+        "effective_strategies_map": {},
+        "best_crisis_strategies_map": {},
+        "random_events_data": {},
         "step3_score_earned": 0,
         "step5_score_earned": 0,
         "step7_score_earned": 0,
         "step8_score_earned": 0,
         "step3_strategy_selected": "",
         "step5_strategy_selected": "",
-        "step7_strategy_selected": "", # Step 7 선택 전략 기록
+        "step7_strategy_selected": "",
         "step8_strategy_selected": "",
         "current_event_name": None,
         "current_event_options": [],
@@ -299,7 +299,6 @@ elif st.session_state.step == 7:
         "🧘 그냥 기다린다": 2
     }
 
-    # step7_state 초기화는 initialize_session_state()에서 처리됨
     if st.session_state.step7_state == "pending":
         show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 7: 내부 문제 해결 전략 선택")
@@ -318,18 +317,16 @@ elif st.session_state.step == 7:
             else:
                 title_prefix = "기다리는 건 항상 좋은 선택은 아니지..."
             
-            # 다음 스텝(피드백)을 위해 title_prefix와 상세 메시지를 selected_strategy_feedback에 저장
             st.session_state.selected_strategy_feedback = (
                 f"“{title_prefix}”\n\n"
                 f"{selected_org_strategy} 전략에 따른 점수: {st.session_state.step7_score_earned}점"
             )
 
-            st.session_state.step7_state = "done" # 상태를 'done'으로 변경
-            st.rerun() # 변경된 상태를 반영하여 페이지 새로 고침 (피드백 화면으로 전환)
+            st.session_state.step7_state = "done"
+            st.rerun()
 
     elif st.session_state.step7_state == "done":
         # 피드백 화면
-        # selected_strategy_feedback에 저장된 제목과 내용 분리 (줄바꿈 문자로 구분)
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
         title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
         subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
@@ -342,15 +339,19 @@ elif st.session_state.step == 7:
         st.info(f"누적 점수: **{st.session_state.score}점**")
 
         # Step 7 관련 세션 상태 정리
+        # ✅ 이 부분에서 step7_state를 "pending"으로 초기화하면 안 됩니다.
+        # "다음 이벤트" 버튼 클릭 시 바로 다음 스텝으로 넘어가야 하므로
+        # 다음 스텝(step 8)으로 넘어간 후에 step7_state가 "pending"으로 초기화되도록 처리해야 합니다.
         if "step7_score_earned" in st.session_state:
             del st.session_state.step7_score_earned
         if "step7_strategy_selected" in st.session_state:
             del st.session_state.step7_strategy_selected
         st.session_state.selected_strategy_feedback = "" # 사용 후 초기화
-        st.session_state.step7_state = "pending" # 다음 게임을 위해 상태 초기화
+        # st.session_state.step7_state = "pending" # 🚨 여기서 초기화하면 반복됩니다!
 
         if st.button("다음 이벤트 ▶️"):
-            st.session_state.step = 8
+            st.session_state.step = 8 # 다음 스텝으로 변경
+            st.session_state.step7_state = "pending" # ✅ 다음 스텝으로 넘어갈 때만 초기화
             st.rerun()
 
 # ---
@@ -416,6 +417,7 @@ elif st.session_state.step == 8:
         st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
         st.info(f"총 점수: **{st.session_state.score}점**")
 
+        # Step 8 관련 세션 상태 정리
         if "step8_score_earned" in st.session_state:
             del st.session_state.step8_score_earned
         if "step8_strategy_selected" in st.session_state:
@@ -424,10 +426,11 @@ elif st.session_state.step == 8:
         st.session_state.current_event_options = []
         st.session_state.current_event_best_strategy = ""
         st.session_state.selected_strategy_feedback = ""
-        st.session_state.step8_state = "pending"
+        # st.session_state.step8_state = "pending" # 🚨 여기서 초기화하면 반복됩니다!
 
         if st.button("최종 결과 확인 ▶️"):
             st.session_state.step = 9
+            st.session_state.step8_state = "pending" # ✅ 다음 스텝으로 넘어갈 때만 초기화
             st.rerun()
 
 # ---
