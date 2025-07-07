@@ -146,6 +146,29 @@ div[data-testid="stRadio"] p, /* st.radio 컨테이너 안의 p 태그 */
     color: white !important;
 }
 
+/* st.success, st.info 등의 메시지 텍스트 색상을 흰색으로 강제 변경 */
+div[data-testid="stNotification"] div[data-testid="stMarkdownContainer"],
+.stSuccess .st-bk, /* Streamlit 1.x에서 텍스트를 감싸는 클래스 */
+.stInfo .st-bk,    /* Streamlit 1.x에서 텍스트를 감싸는 클래스 */
+.stWarning .st-bk, /* Streamlit 1.x에서 텍스트를 감싸는 클래스 */
+.stError .st-bk,    /* Streamlit 1.x에서 텍스트를 감싸는 클래스 */
+/* Streamlit 1.x대 이후 버전에서 텍스트가 p 태그로 직접 들어가는 경우 */
+.stSuccess p,
+.stInfo p,
+.stWarning p,
+.stError p
+{
+    color: white !important;
+}
+
+/* 추가적으로 아이콘 색상도 변경해야 할 경우 (선택 사항) */
+.stSuccess > div > div > svg,
+.stInfo > div > div > svg,
+.stWarning > div > div > svg,
+.stError > div > div > svg {
+    color: white !important; /* 아이콘 색상도 흰색으로 변경 */
+}
+
 
 /* Streamlit 버튼 스타일 조정 및 중앙 정렬 */
 .stButton>button {
@@ -279,6 +302,7 @@ def show_speech(title, sub, image_url):
         <div style="margin-top: 3px; font-size: 0.8rem; color: #f0f0f0;">{sub}</div>
     </div>
     """, unsafe_allow_html=True)
+
 
 # ---
 ## Step 0: 시작 안내
