@@ -134,7 +134,7 @@ html, body, [data-testid="stApp"] {
 
 .speech-bubble {
     position: absolute;
-    bottom: 8vh;
+    top: 8vh;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -166,8 +166,14 @@ button p { color: #000000; font-weight: bold; }
 
 div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
 div[data-baseweb="select"] * { color: #000000; fill: #000000; }
+
+/* ⬇️ 선택지 글자 흰색으로 강제 설정 */
+label, .stRadio label, .stMarkdown {
+    color: white !important;
+}
 </style>
 """, unsafe_allow_html=True)
+
 
 # ---
 ## Step 0: 시작 안내
