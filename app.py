@@ -50,7 +50,7 @@ def initialize_session_state():
 
 initialize_session_state()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 # ✅ 로컬 파일 기반 순위 시스템 함수
 RANK_FILE = "rankings.csv"
 
@@ -79,7 +79,7 @@ def show_full_rankings():
     else:
         st.info("아직 저장된 기록이 없습니다.")
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 # ✅ 공통 CSS 스타일 (한 번만 정의)
 st.markdown("""
 <style>
@@ -141,7 +141,7 @@ def show_speech(title: str, subtitle: str, image_url: str):
     """, unsafe_allow_html=True)
 
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
     show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
@@ -151,7 +151,7 @@ if st.session_state.step == 0:
         st.session_state.step = 1
         st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 1: 업종 선택
 elif st.session_state.step == 1:
     if not st.session_state.industry_confirmed:
@@ -175,7 +175,7 @@ elif st.session_state.step == 1:
             st.session_state.step = 2
             st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 2: 회사 이름 입력
 elif st.session_state.step == 2:
     if not st.session_state.company_name:
@@ -197,7 +197,7 @@ elif st.session_state.step == 2:
         st.session_state.step = 3
         st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 3: 전략 선택 (예기치 못한 사건)
 elif st.session_state.step == 3:
     show_speech("“예기치 못한 사건 발생!”", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
@@ -244,7 +244,7 @@ elif st.session_state.step == 3:
         st.session_state.step = 4
         st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 4: 결과 분석 및 피드백 (Step 3에 대한)
 elif st.session_state.step == 4:
     score_earned_this_step = st.session_state.get("step3_score_earned", 0)
@@ -276,7 +276,7 @@ elif st.session_state.step == 4:
         st.session_state.step = 5
         st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 5: 국가적 위기 대응
 elif st.session_state.step == 5:
     show_speech("“국가적 위기 발생!”", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
@@ -321,7 +321,7 @@ elif st.session_state.step == 5:
         st.session_state.step = 6 # 다음 스텝으로 이동 (새로운 피드백 스텝)
         st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 6: 중간 평가 (국가적 위기 대응에 대한 피드백)
 elif st.session_state.step == 6:
     score_earned_this_step = st.session_state.get("step5_score_earned", 0)
@@ -349,7 +349,7 @@ elif st.session_state.step == 6:
         st.session_state.step = 7 # 다음 스텝으로 이동 (기존 Step 6)
         st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 7: 내부 문제 해결 (이전 Step 6)
 elif st.session_state.step == 7:
     org_issues = {
@@ -411,7 +411,7 @@ elif st.session_state.step == 7:
             st.session_state.step7_state = "pending"
             st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 8: 돌발 변수 등장 (이전 Step 7)
 elif st.session_state.step == 8:
     if not st.session_state.random_events_data:
@@ -489,7 +489,7 @@ elif st.session_state.step == 8:
             st.session_state.step8_state = "pending"
             st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 9: 마케팅 또는 확장 전략 선택 (이전 Step 8)
 elif st.session_state.step == 9:
     show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
@@ -614,7 +614,7 @@ elif st.session_state.step == 9:
             st.session_state.step9_state = "pending"
             st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 10: 연도별 리포트 + 사용자 피드백 (이전 Step 9)
 elif st.session_state.step == 10:
     final_score = st.session_state.score
@@ -655,7 +655,7 @@ elif st.session_state.step == 10:
         st.session_state.step = 11 # 다음 스텝으로 이동 (최종 평가)
         st.rerun()
 
----
+st.markdown("---") # 여기에 st.markdown 추가
 ## Step 11: 최종 평가 및 엔딩 분기 (이전 Step 10)
 elif st.session_state.step == 11:
     final_score = st.session_state.score
