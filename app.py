@@ -3,6 +3,16 @@ import pandas as pd
 import os
 import random
 import time
+def show_speech(title, sub, image_url):
+    st.markdown(f"""
+    <div class="container">
+        <img class="bg-image" src="{image_url}">
+        <div class="speech-bubble">
+            <div class="speech-title">{title}</div>
+            <div class="speech-sub">{sub}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ✅ 세션 상태 초기화 함수
 def initialize_session_state():
