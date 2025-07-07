@@ -696,4 +696,3 @@ elif st.session_state.step == 11:
     if st.button("다시 시작하기"):
         st.session_state.reset_game = True
         st.rerun()
-```
