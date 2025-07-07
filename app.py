@@ -67,15 +67,6 @@ def save_to_ranking(company_name, final_score):
     updated.to_csv(RANK_FILE, index=False)
     st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점")
 
-
-def clear_rankings():
-    """rankings.csv 파일을 삭제하여 순위 기록을 초기화합니다."""
-    if os.path.exists(RANK_FILE):
-        os.remove(RANK_FILE) # 파일 삭제
-        st.success("✅ 순위 기록이 초기화되었습니다.")
-    else:
-        st.info("⚠️ 삭제할 순위 기록 파일이 없습니다.")
-
 def show_full_rankings():
     """전체 순위 출력 (내림차순 정렬) 및 초기화 버튼 포함"""
     st.markdown("<h3 style='color: white;'>🏁 전체 플레이어 순위표</h3>", unsafe_allow_html=True)
@@ -89,14 +80,6 @@ def show_full_rankings():
             st.info("아직 저장된 기록이 없습니다.")
     else:
         st.info("아직 저장된 기록이 없습니다.")
-
-    # ---
-    # 초기화 버튼 추가
-    st.markdown("<h4 style='color: white;'>🗑️ 순위 기록 초기화</h4>", unsafe_allow_html=True)
-    if st.button("모든 순위 기록 초기화", help="이 버튼을 누르면 저장된 모든 순위 기록이 삭제됩니다."):
-        clear_rankings()
-        st.rerun() # 변경사항을 즉시 반영하기 위해 앱 다시 실행
-
 
 # ---
 # ✅ 공통 CSS 스타일 (한 번만 정의)
