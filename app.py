@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import random
 import time
+
 def show_speech(title, sub, image_url):
     st.markdown(f"""
     <div class="container">
@@ -98,45 +99,37 @@ html, body, [data-testid="stApp"] {
     padding: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden;
+    overflow: hidden; /* 전체 앱 스크롤 숨김 */
 }
 
 .container {
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    overflow: hidden; /* 컨테이너 스크롤 숨김 */
     margin: 0;
     padding: 0;
     background-color: #1a1a1a;
+    display: flex; /* Flexbox로 내부 요소 배치 */
+    flex-direction: column; /* 세로 방향 정렬 */
+    justify-content: flex-start; /* 상단 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
 }
 
 .bg-image {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
+    position: absolute; /* 절대 위치 */
+    bottom: 0; /* 하단 고정 */
+    left: 50%; /* 가로 중앙 정렬 */
+    transform: translateX(-50%); /* 가로 중앙 정렬 */
+    max-height: 80vh; /* 화면 높이의 80%를 최대 높이로 설정 */
+    width: auto; /* 너비는 비율 유지 */
+    object-fit: contain; /* 이미지가 잘리지 않고 컨테이너에 맞게 축소 */
     z-index: 0;
 }
 
-.bg-image.centered {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: auto;
-    height: 100vh;
-    max-width: 100%;
-    object-fit: contain;
-}
-
 .speech-bubble {
-    position: absolute;
-    top: 8vh;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative; /* 상대 위치 (컨테이너 내에서 위치) */
+    top: 5vh; /* 상단에서 조금 내려오게 조정 (이미지와 겹치지 않도록) */
     width: 90%;
     max-width: 500px;
     background: rgba(255, 255, 255, 0.1);
@@ -144,8 +137,9 @@ html, body, [data-testid="stApp"] {
     border-radius: 25px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     text-align: center;
-    z-index: 1;
+    z-index: 2; /* 이미지보다 위에 오도록 설정 */
     backdrop-filter: blur(8px);
+    margin-bottom: 20px; /* 아래 콘텐츠와의 간격 */
 }
 
 .speech-title {
@@ -171,6 +165,55 @@ div[data-baseweb="select"] * { color: #000000; fill: #000000; }
 label, .stRadio label, .stMarkdown {
     color: white !important;
 }
+
+/* Streamlit main content area 조정 */
+.stApp > header, .stApp > footer {
+    display: none; /* Streamlit 기본 헤더/푸터 숨김 */
+}
+
+.main .block-container {
+    padding-top: 20px; /* 상단 패딩 조정 */
+    padding-bottom: 20px; /* 하단 패딩 조정 */
+    max-width: 100%; /* 너비 최대화 */
+    overflow-y: auto; /* 콘텐츠가 넘칠 경우에만 스크롤 허용 */
+    height: calc(100vh - 200px); /* 말풍선과 이미지 공간을 제외한 높이 */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    position: absolute;
+    top: 200px; /* 말풍선 아래에서 시작 */
+    left: 0;
+    right: 0;
+    margin: auto; /* 가운데 정렬 */
+}
+
+/* Streamlit 요소들의 배경색을 투명하게 */
+div[data-testid="stVerticalBlock"] > div:first-child {
+    background-color: transparent !important;
+}
+div[data-testid="stVerticalBlock"] {
+    background-color: transparent !important;
+}
+
+/* 선택지 버튼/라디오 버튼 주변 배경을 투명하게 */
+.stRadio, .stSelectbox {
+    background-color: transparent !important;
+}
+
+/* 입력 필드 및 버튼 스타일 조정 */
+.stTextInput > div > div > input,
+.stButton > button {
+    background-color: #333;
+    color: white;
+    border-radius: 8px;
+    border: 1px solid #555;
+    padding: 10px 15px;
+}
+.stButton > button:hover {
+    background-color: #555;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
