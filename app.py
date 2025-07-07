@@ -92,10 +92,7 @@ html, body, [data-testid="stApp"] {
     overflow: hidden; /* 전체 앱 스크롤 방지 */
     background-color: #1a1a1a; /* 배경 색상 */
     color: #ffffff; /* 기본 텍스트 색상 */
-    /* 배경 이미지 추가 */
-    background-size: cover; /* 화면을 꽉 채우도록 설정 */
-    background-position: center bottom; /* 중앙 하단 정렬 */
-    background-repeat: no-repeat; /* 반복 없음 */
+    /* 배경 이미지 추가는 show_speech 함수에서 동적으로 처리 */
 }
 
 /* Streamlit 메인 콘텐츠 컨테이너 설정 */
@@ -248,8 +245,8 @@ def show_speech(title, sub, image_url):
     <style>
     [data-testid="stApp"] {{
         background-image: url("{image_url}");
-        background-size: cover;
-        background-position: center bottom;
+        background-size: 110%; /* 이미지를 약간 확대 */
+        background-position: center 60%; /* 이미지를 아래로 내림 */
         background-repeat: no-repeat;
     }}
     </style>
@@ -264,7 +261,7 @@ def show_speech(title, sub, image_url):
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* 그림자 약화 */
         text-align: center;
         backdrop-filter: blur(5px); /* 블러 효과 약간 줄임 */
-        margin-top: -120px; /* 이미지 위에 더 많이 겹치도록 음수 마진 사용, 필요에 따라 조절 */
+        margin-top: -50px; /* 이미지 위에 더 많이 겹치도록 음수 마진 사용, 필요에 따라 조절 */
         margin-left: auto;
         margin-right: auto;
         width: 90%;
@@ -321,7 +318,7 @@ elif st.session_state.step == 2:
         show_speech(f"{st.session_state.company_name}... 멋진 이름이군!", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 2: 회사 이름 입력")
-    
+
     # 텍스트 입력 필드를 중앙 정렬하기 위해 st.columns 사용
     col1, col2, col3 = st.columns([1,2,1])
     with col2: # 가운데 컬럼에 배치
@@ -731,7 +728,7 @@ elif st.session_state.step == 9:
                     f"{title_prefix}\n\n"
                     f"{selected_marketing_strategy} 전략으로 {st.session_state.step9_score_earned}점 획득!"
                 )
-                
+
                 st.session_state.step9_state = "done"
                 st.rerun()
 
