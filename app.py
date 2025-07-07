@@ -275,7 +275,7 @@ def show_speech(title, sub, image_url):
     [data-testid="stApp"] {{
         background-image: url("{image_url}");
         background-size: 260%; /* 이미지를 약간 확대 */
-        background-position: center 80%; /* 이미지를 아래로 내림 */
+        background-position: center 100%; /* 이미지를 아래로 내림 */
         background-repeat: no-repeat;
     }}
     </style>
