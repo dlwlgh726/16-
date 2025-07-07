@@ -4,17 +4,7 @@ import os
 import random
 import time
 
-def show_speech(title, sub, image_url):
-    st.markdown(f"""
-    <div class="container">
-        <img class="bg-image" src="{image_url}">
-        <div class="speech-bubble">
-            <div class="speech-title">{title}</div>
-            <div class="speech-sub">{sub}</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
+# ---
 # ✅ 세션 상태 초기화 함수
 def initialize_session_state():
     """Streamlit 세션 상태를 초기화하거나 재설정합니다."""
@@ -76,8 +66,7 @@ def save_to_ranking(company_name, final_score):
         updated = new_entry
 
     updated.to_csv(RANK_FILE, index=False)
-    st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점")
-
+    # st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점") # 최종 단계에서만 표시
 
 def show_full_rankings():
     """전체 순위 출력 (내림차순 정렬)"""
@@ -94,133 +83,78 @@ def show_full_rankings():
 # ✅ 공통 CSS 스타일 (전체 화면 배경 및 말풍선 UI 고정)
 st.markdown("""
 <style>
+/* 기본 앱 컨테이너 설정 */
 html, body, [data-testid="stApp"] {
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
     overflow: hidden; /* 전체 앱 스크롤 방지 */
+    background-color: #1a1a1a; /* 배경 색상 */
+    color: #ffffff; /* 기본 텍스트 색상 */
 }
 
-/* Streamlit 메인 컨테이너 높이 고정 및 스크롤 방지 */
+/* Streamlit 메인 콘텐츠 컨테이너 설정 */
 .main .block-container {
-    padding-top: 1rem; /* 상단 여백 줄이기 */
-    padding-bottom: 1rem; /* 하단 여백 줄이기 */
-    max-height: calc(100vh - 100px); /* 말풍선 영역(8vh + padding) 고려하여 최대 높이 설정 */
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    max-height: calc(100vh - 20px); /* 전체 뷰포트 높이 - 여백 */
     overflow-y: auto; /* 필요 시 이 영역만 스크롤 가능하도록 */
     overflow-x: hidden;
+    display: flex; /* 내부 요소 중앙 정렬을 위해 flexbox 사용 */
+    flex-direction: column; /* 세로 정렬 */
+    justify-content: flex-start; /* 상단 시작 (말풍선 때문에) */
+    align-items: center; /* 가로 중앙 정렬 */
+    width: 100%; /* 전체 너비 사용 */
 }
 
-.container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-}
-
-.bg-image {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 0;
-}
-
-.bg-image.centered {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: auto;
-    height: 100vh;
-    max-width: 100%;
-    object-fit: contain;
-}
-
-.speech-bubble {
-    position: absolute;
-    top: 8vh; /* 상단에 고정 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 500px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px 20px; /* 패딩 줄이기 */
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    z-index: 1;
-    backdrop-filter: blur(8px);
-    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
-}
-
-.speech-title {
-    font-size: 1.3rem; /* 글자 크기 줄이기 */
-    font-weight: bold;
-    color: #ffffff;
-    margin-bottom: 5px; /* 마진 줄이기 */
-}
-
-.speech-sub {
-    margin-top: 5px; /* 마진 줄이기 */
-    font-size: 0.9rem; /* 글자 크기 줄이기 */
-    color: #f0f0f0;
-}
-
-body { background-color: #1a1a1a; color: #ffffff; }
-h1, h2, h3, h4, h5, h6, label, p, span, div { color: inherit; }
-button p { color: #000000; font-weight: bold; }
-
-div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
-div[data-baseweb="select"] * { color: #000000; fill: #000000; }
-
-/* ⬇️ 모든 텍스트 중앙 정렬 */
+/* 텍스트 중앙 정렬 */
 .stMarkdown, .stText, .stAlert, .stSuccess, .stInfo, .stWarning, .stError,
-h1, h2, h3, h4, h5, h6, label, p, .stRadio > label > div, .stCheckbox > label > div {
+h1, h2, h3, h4, h5, h6, label, p, .stRadio > label > div, .stCheckbox > label > div,
+div[data-testid^="stMarkdownContainer"] { /* st.markdown으로 생성되는 div도 포함 */
     text-align: center !important;
+    width: 100%; /* 중앙 정렬을 위해 너비 100% 확보 */
 }
 
-/* 텍스트 입력 필드의 placeholder 텍스트 중앙 정렬 */
-.stTextInput > div > div > input::placeholder {
-    text-align: center !important;
-}
-
-/* 텍스트 입력 필드에 입력된 텍스트 중앙 정렬 */
+/* 텍스트 입력 필드의 placeholder 텍스트 및 입력된 텍스트 중앙 정렬 */
+.stTextInput > div > div > input::placeholder,
 .stTextInput > div > div > input {
     text-align: center !important;
 }
 
-/* ⬇️ 선택지 글자 흰색으로 강제 설정 */
+/* 선택지 글자 흰색으로 강제 설정 */
 label, .stRadio label, .stMarkdown {
     color: white !important;
 }
 
-/* Streamlit 버튼 스타일 조정 */
+/* Streamlit 버튼 스타일 조정 및 중앙 정렬 */
 .stButton>button {
-    width: 100%;
-    padding: 8px 0; /* 패딩 줄이기 */
-    margin-top: 10px; /* 마진 줄이기 */
+    width: 80%; /* 버튼 너비 조정 */
+    max-width: 300px; /* 최대 너비 설정 */
+    padding: 10px 0;
+    margin-top: 15px;
     display: block; /* 블록 요소로 만들어 margin: auto 적용 가능하게 */
     margin-left: auto;
     margin-right: auto;
+    background-color: #4CAF50; /* 버튼 색상 */
+    color: white; /* 버튼 텍스트 색상 */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+.stButton>button:hover {
+    background-color: #45a049;
 }
 
-/* 라디오 버튼 간격 조절 */
-div.stRadio > label {
-    margin-bottom: 0.2rem;
-}
-
-/* 라디오 버튼 및 체크박스 텍스트 중앙 정렬을 위해 플렉스 박스 사용 */
+/* 라디오 버튼 및 체크박스 텍스트 중앙 정렬 */
 div.stRadio > label {
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
+    padding: 5px 0; /* 라디오 버튼 간격 조절 */
 }
 
 div.stCheckbox > label {
@@ -228,12 +162,32 @@ div.stCheckbox > label {
     justify-content: center;
     align-items: center;
     text-align: center;
+    padding: 5px 0;
 }
-
 
 /* 텍스트 입력창 높이 조절 */
 .stTextInput > div > div > input {
-    height: 38px; /* 높이 조절 */
+    height: 45px; /* 높이 조절 */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #2e2e2e; /* 입력창 배경색 */
+    color: white; /* 입력창 텍스트색 */
+}
+
+/* Selectbox 스타일 조정 및 중앙 정렬 (내부 요소 조절) */
+div[data-baseweb="select"] {
+    background-color: #2e2e2e; /* 셀렉트박스 배경색 */
+    color: #ffffff;
+    border-radius: 8px;
+    width: 80%; /* 너비 조정 */
+    max-width: 300px; /* 최대 너비 */
+    margin-left: auto;
+    margin-right: auto;
+    display: block; /* 중앙 정렬을 위해 블록 요소로 */
+}
+div[data-baseweb="select"] * {
+    color: #ffffff; /* 셀렉트박스 내부 텍스트 색상 */
+    fill: #ffffff; /* 아이콘 색상 */
 }
 
 /* 데이터프레임 높이 조절 (랭킹표) */
@@ -243,15 +197,58 @@ div.stCheckbox > label {
     margin-left: auto;
     margin-right: auto;
     display: block; /* 중앙 정렬을 위해 블록 요소로 */
+    border: 1px solid #444;
+    border-radius: 8px;
+    background-color: #2e2e2e;
+}
+.stDataFrame table th {
+    background-color: #3e3e3e !important;
+    color: white !important;
+}
+.stDataFrame table td {
+    color: white !important;
 }
 
-/* 컬럼 간격 조절 (필요 시) */
-.st-emotion-cache-nahz7x { /* st.columns 내부 요소의 클래스 (버전에 따라 다를 수 있음) */
-    gap: 0.5rem; /* 컬럼 간 간격 줄이기 */
-}
-
+/* 말풍선과 이미지 CSS는 show_speech 함수 내에서 인라인 스타일로 관리 */
+/* 말풍선 관련 기존 CSS 삭제 */
+/* .container, .bg-image, .speech-bubble 등 삭제 */
 </style>
 """, unsafe_allow_html=True)
+
+
+# ---
+# ✅ show_speech 함수 변경
+def show_speech(title, sub, image_url):
+    """
+    배경 이미지와 말풍선을 Streamlit 컨테이너 내부에 배치하여
+    Streamlit의 레이아웃 흐름을 따르도록 수정
+    """
+    # 이미지 컨테이너 (CEO 이미지)
+    st.image(image_url, use_column_width=True, output_format="PNG") # 이미지 너비 자동 조절
+
+    # 말풍선 (이미지 위에 겹쳐 보이도록 마진 조정)
+    # Streamlit 컨테이너에 직접 스타일 적용하여 말풍선처럼 보이게 함
+    st.markdown(f"""
+    <div style="
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px 20px;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        backdrop-filter: blur(8px);
+        margin-top: -150px; /* 이미지 위에 겹치도록 음수 마진 사용, 필요에 따라 조절 */
+        margin-left: auto;
+        margin-right: auto;
+        width: 90%;
+        max-width: 500px;
+        position: relative; /* z-index를 위해 필요 */
+        z-index: 10; /* 다른 콘텐츠보다 위에 오도록 */
+    ">
+        <div style="font-size: 1.3rem; font-weight: bold; color: #ffffff; margin-bottom: 5px;">{title}</div>
+        <div style="margin-top: 5px; font-size: 0.9rem; color: #f0f0f0;">{sub}</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True) # 말풍선 아래 여백 추가
 
 
 # ---
@@ -276,24 +273,7 @@ elif st.session_state.step == 1:
     industries = ["💻 IT 스타트업", "🌱 친환경 제품", "🎮 게임 개발사", "👗 패션 브랜드", "🍔 푸드테크", "🛒 글로벌 전자상거래"]
 
     if not st.session_state.industry_confirmed:
-        # Selectbox는 기본적으로 중앙 정렬이 어려우므로, 컨테이너로 감싸고 중앙 정렬 시도
-        with st.container():
-            st.markdown(
-                f"""
-                <style>
-                    .stSelectbox {{
-                        display: flex;
-                        justify-content: center;
-                        text-align: center;
-                    }}
-                    .stSelectbox > div {{
-                        width: fit-content;
-                        min-width: 250px; /* 최소 너비 설정 */
-                    }}
-                </style>
-                """, unsafe_allow_html=True
-            )
-            selected = st.selectbox("회사 업종을 선택해주세요", industries)
+        selected = st.selectbox("회사 업종을 선택해주세요", industries)
         if st.button("업종 확정"):
             st.session_state.industry = selected
             st.session_state.industry_confirmed = True
@@ -314,15 +294,15 @@ elif st.session_state.step == 2:
         show_speech(f"{st.session_state.company_name}... 멋진 이름이군!", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 2: 회사 이름 입력")
-    # 텍스트 입력 위젯 중앙 정렬은 input::placeholder 및 input 자체에 text-align: center를 적용
-    # 위젯 자체를 중앙에 두려면, 부모 컨테이너에 flexbox 또는 margin: auto 적용 필요
-    st.text_input("당신의 회사 이름은?", max_chars=20, key="company_name_input") # key 추가
+    
+    # 텍스트 입력 필드를 중앙 정렬하기 위해 st.columns 사용
+    col1, col2, col3 = st.columns([1,2,1])
+    with col2: # 가운데 컬럼에 배치
+        name_input = st.text_input("당신의 회사 이름은?", max_chars=20, key="company_name_input") # key 추가
 
     if st.button("회사 이름 확정"):
-        # st.session_state.company_name = st.session_state.company_name_input.strip()
         # 이전 코드에서 텍스트 입력창과 세션 상태 변수 이름 불일치 수정
         # 텍스트 입력창은 'company_name_input' 키로 값을 가져와야 함
-        name_input = st.session_state.company_name_input
         if name_input.strip():
             st.session_state.company_name = name_input.strip()
             st.success("✅ 회사 이름이 등록되었습니다!")
@@ -636,7 +616,7 @@ elif st.session_state.step == 9:
                 "글로벌 시장 진출 (초기)": 10,
                 "유사 기업 M&A": 7,
                 "가격 인하": 5,
-                "프리미엄 서비스 전략": 6
+                "프리미ум 서비스 전략": 6
             }
         },
         "🌱 친환경 제품": {
