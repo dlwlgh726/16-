@@ -262,48 +262,20 @@ def show_speech(title: str, subtitle: str, image_url: str):
 
 # ---
 # ---
+# ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    # 버튼 포함된 말풍선 구조로 통합
-    st.markdown(f"""
-    <div class="container">
-        <img class="bg-image" src="https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png">
-        <div class="speech-bubble">
-            <div class="speech-title">“환영합니다!”</div>
-            <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
-            <br>
-            <form action="#">
-                <button style="margin-top: 20px; padding: 10px 20px; font-size: 1rem; font-weight: bold; background-color: white; color: black; border: none; border-radius: 10px;" onclick="window.location.reload();">게임 시작 ▶️</button>
-            </form>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
-    # 버튼 클릭 시 step을 변경하도록 별도 Streamlit 처리
-    if "step0_clicked" not in st.session_state:
-        st.session_state.step0_clicked = False
+    # ✅ 말풍선과 버튼이 한 화면에 모두 나오도록 별도 공간 확보 제거
+    st.markdown("<br><br>", unsafe_allow_html=True)  # 약간의 여백만 추가
 
-    if st.session_state.step0_clicked or st.button("게임 시작 ▶️", key="start_hidden", help="숨겨진 버튼 (말풍선 외부 클릭 대비용)", use_container_width=True):
+    # ✅ 버튼을 별도 컨테이너에 노출시켜 화면 내 자연스럽게 보이도록 조정
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    if st.button("게임 시작 ▶️", key="start_button", use_container_width=True):
         st.session_state.step = 1
-        st.session_state.step0_clicked = False
         st.rerun()
-
-    # 자바스크립트로 말풍선 내 버튼 누르면 Streamlit 세션에도 반영
-    st.markdown("""
-    <script>
-    const btn = document.querySelector('form button');
-    if (btn) {
-        btn.onclick = function(e) {
-            e.preventDefault();
-            fetch('/_stcore/update_component', {
-                method: 'POST',
-                body: JSON.stringify({type: 'widget', id: 'start_hidden'}),
-                headers: {'Content-Type': 'application/json'}
-            }).then(() => window.dispatchEvent(new Event('click')));
-        }
-    }
-    </script>
-    """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ---
