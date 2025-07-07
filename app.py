@@ -99,58 +99,76 @@ html, body, [data-testid="stApp"] {
     padding: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden; /* 전체 앱 스크롤 숨김 */
+    overflow: hidden; /* 전체 앱 스크롤 방지 */
+}
+
+/* Streamlit 메인 컨테이너 높이 고정 및 스크롤 방지 */
+.main .block-container {
+    padding-top: 1rem; /* 상단 여백 줄이기 */
+    padding-bottom: 1rem; /* 하단 여백 줄이기 */
+    max-height: calc(100vh - 100px); /* 말풍선 영역(8vh + padding) 고려하여 최대 높이 설정 */
+    overflow-y: auto; /* 필요 시 이 영역만 스크롤 가능하도록 */
+    overflow-x: hidden;
 }
 
 .container {
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden; /* 컨테이너 스크롤 숨김 */
+    overflow: hidden;
     margin: 0;
     padding: 0;
     background-color: #1a1a1a;
-    display: flex; /* Flexbox로 내부 요소 배치 */
-    flex-direction: column; /* 세로 방향 정렬 */
-    justify-content: flex-start; /* 상단 정렬 */
-    align-items: center; /* 가로 중앙 정렬 */
 }
 
 .bg-image {
-    position: absolute; /* 절대 위치 */
-    bottom: 0; /* 하단 고정 */
-    left: 50%; /* 가로 중앙 정렬 */
-    transform: translateX(-50%); /* 가로 중앙 정렬 */
-    max-height: 80vh; /* 화면 높이의 80%를 최대 높이로 설정 */
-    width: auto; /* 너비는 비율 유지 */
-    object-fit: contain; /* 이미지가 잘리지 않고 컨테이너에 맞게 축소 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
     z-index: 0;
 }
 
+.bg-image.centered {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: 100vh;
+    max-width: 100%;
+    object-fit: contain;
+}
+
 .speech-bubble {
-    position: relative; /* 상대 위치 (컨테이너 내에서 위치) */
-    top: 5vh; /* 상단에서 조금 내려오게 조정 (이미지와 겹치지 않도록) */
+    position: absolute;
+    top: 8vh; /* 상단에 고정 */
+    left: 50%;
+    transform: translateX(-50%);
     width: 90%;
     max-width: 500px;
     background: rgba(255, 255, 255, 0.1);
-    padding: 20px 25px;
+    padding: 15px 20px; /* 패딩 줄이기 */
     border-radius: 25px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     text-align: center;
-    z-index: 2; /* 이미지보다 위에 오도록 설정 */
+    z-index: 1;
     backdrop-filter: blur(8px);
-    margin-bottom: 20px; /* 아래 콘텐츠와의 간격 */
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
 }
 
 .speech-title {
-    font-size: 1.4rem;
+    font-size: 1.3rem; /* 글자 크기 줄이기 */
     font-weight: bold;
     color: #ffffff;
+    margin-bottom: 5px; /* 마진 줄이기 */
 }
 
 .speech-sub {
-    margin-top: 10px;
-    font-size: 1rem;
+    margin-top: 5px; /* 마진 줄이기 */
+    font-size: 0.9rem; /* 글자 크기 줄이기 */
     color: #f0f0f0;
 }
 
@@ -166,52 +184,32 @@ label, .stRadio label, .stMarkdown {
     color: white !important;
 }
 
-/* Streamlit main content area 조정 */
-.stApp > header, .stApp > footer {
-    display: none; /* Streamlit 기본 헤더/푸터 숨김 */
+/* Streamlit 버튼 스타일 조정 */
+.stButton>button {
+    width: 100%;
+    padding: 8px 0; /* 패딩 줄이기 */
+    margin-top: 10px; /* 마진 줄이기 */
 }
 
-.main .block-container {
-    padding-top: 20px; /* 상단 패딩 조정 */
-    padding-bottom: 20px; /* 하단 패딩 조정 */
-    max-width: 100%; /* 너비 최대화 */
-    overflow-y: auto; /* 콘텐츠가 넘칠 경우에만 스크롤 허용 */
-    height: calc(100vh - 200px); /* 말풍선과 이미지 공간을 제외한 높이 */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    position: absolute;
-    top: 200px; /* 말풍선 아래에서 시작 */
-    left: 0;
-    right: 0;
-    margin: auto; /* 가운데 정렬 */
+/* 라디오 버튼 간격 조절 */
+div.stRadio > label {
+    margin-bottom: 0.2rem;
 }
 
-/* Streamlit 요소들의 배경색을 투명하게 */
-div[data-testid="stVerticalBlock"] > div:first-child {
-    background-color: transparent !important;
-}
-div[data-testid="stVerticalBlock"] {
-    background-color: transparent !important;
+/* 텍스트 입력창 높이 조절 */
+.stTextInput > div > div > input {
+    height: 38px; /* 높이 조절 */
 }
 
-/* 선택지 버튼/라디오 버튼 주변 배경을 투명하게 */
-.stRadio, .stSelectbox {
-    background-color: transparent !important;
+/* 데이터프레임 높이 조절 (랭킹표) */
+.stDataFrame {
+    max-height: 200px; /* 랭킹표 높이 제한 */
+    overflow-y: auto;
 }
 
-/* 입력 필드 및 버튼 스타일 조정 */
-.stTextInput > div > div > input,
-.stButton > button {
-    background-color: #333;
-    color: white;
-    border-radius: 8px;
-    border: 1px solid #555;
-    padding: 10px 15px;
-}
-.stButton > button:hover {
-    background-color: #555;
+/* 컬럼 간격 조절 (필요 시) */
+.st-emotion-cache-nahz7x { /* st.columns 내부 요소의 클래스 (버전에 따라 다를 수 있음) */
+    gap: 0.5rem; /* 컬럼 간 간격 줄이기 */
 }
 
 </style>
@@ -221,9 +219,9 @@ div[data-testid="stVerticalBlock"] {
 # ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
-    st.markdown("### 경영 시뮬레이션 게임에 오신 것을 환영합니다!")
-    st.markdown("이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!")
+    show_speech("환영합니다!", "게임을 시작하려면 아래 버튼을 눌러주세요.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+    st.markdown("### 경영 시뮬레이션 게임")
+    st.markdown("회사를 창업하고 성장시키는 과정을 경험해보세요!")
     if st.button("게임 시작 ▶️"):
         st.session_state.step = 1
         st.rerun()
@@ -232,9 +230,9 @@ if st.session_state.step == 0:
 ## Step 1: 업종 선택
 elif st.session_state.step == 1:
     if not st.session_state.industry_confirmed:
-        show_speech("“좋아, 이제 우리가 어떤 산업에 뛰어들지 결정할 시간이군.”", "어떤 분야에서 승부할지, 네 선택을 보여줘.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        show_speech("어떤 산업에 뛰어들지 결정할 시간이다.", "네 선택을 보여줘.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
-        show_speech(f"“{st.session_state.industry}... 흥미로운 선택이군.”", "다음 단계로 가볼까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        show_speech(f"{st.session_state.industry}... 흥미로운 선택이군.", "다음 단계로 가볼까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 1: 회사 분야 선택")
     industries = ["💻 IT 스타트업", "🌱 친환경 제품", "🎮 게임 개발사", "👗 패션 브랜드", "🍔 푸드테크", "🛒 글로벌 전자상거래"]
@@ -256,12 +254,12 @@ elif st.session_state.step == 1:
 ## Step 2: 회사 이름 입력
 elif st.session_state.step == 2:
     if not st.session_state.company_name:
-        show_speech("“이제 회사를 설립할 시간이야.”", "멋진 회사 이름을 지어보자!", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        show_speech("이제 회사를 설립할 시간이야.", "멋진 회사 이름을 지어보자!", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
-        show_speech(f"“{st.session_state.company_name}... 멋진 이름이군!”", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        show_speech(f"{st.session_state.company_name}... 멋진 이름이군!", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 2: 회사 이름 입력")
-    name_input = st.text_input("당신의 회사 이름은?", max_chars=20)
+    name_input = st.text_input("당신의 회사 이름은?", max_chars=20, key="company_name_input") # key 추가
 
     if st.button("회사 이름 확정"):
         if name_input.strip():
@@ -270,31 +268,31 @@ elif st.session_state.step == 2:
         else:
             st.warning("⚠️ 회사 이름을 입력해주세요.")
 
-    if st.session_state.company_name and st.button("다음 ▶️"):
+    if st.session_state.company_name and st.button("다음 ▶️", key="next_step2"): # key 추가
         st.session_state.step = 3
         st.rerun()
 
 # ---
 ## Step 3: 전략 선택 (예기치 못한 사건)
 elif st.session_state.step == 3:
-    show_speech("“예기치 못한 사건 발생!”", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
+    show_speech("예기치 못한 사건 발생!", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
 
     situations = {
-        "⚠️ 대규모 고객 데이터 유출 발생": ["보안 시스템 전면 재구축", "PR 대응", "사과문 발표", "외부 컨설턴트 투입", "서비스 일시 중단"],
+        "⚠️ 대규모 고객 데이터 유출": ["보안 시스템 재구축", "PR 대응", "사과문 발표", "외부 컨설턴트 투입", "서비스 일시 중단"],
         "📈 갑작스러운 수요 폭증": ["생산 라인 확장", "기술 투자", "임시 고용 확대", "외주 활용", "품질 단가 조정"],
         "💸 원자재 가격 급등": ["공급처 다변화", "대체 소재 도입", "장기 계약", "수입 조정", "원가 절감"],
         "🔥 경쟁사 파산": ["인재 채용 강화", "기술 인수", "시장 확대", "기술 유출 방지", "법적 검토"],
         "📉 주요 제품 매출 급감": ["제품 리뉴얼", "광고 캠페인", "신제품 출시", "할인 행사", "시장 조사"],
-        "🏆 대기업으로부터 투자 제안": ["지분 일부 매각", "전략적 제휴", "거절", "조건 재협상", "지분 공동 소유"],
-        "🌍 글로벌 시장 진출 기회": ["현지화 전략", "글로벌 광고 캠페인", "온라인 직판", "외국 파트너와 제휴", "해외 공장 설립"]
+        "🏆 대기업 투자 제안": ["지분 일부 매각", "전략적 제휴", "거절", "조건 재협상", "지분 공동 소유"],
+        "🌍 글로벌 시장 진출 기회": ["현지화 전략", "글로벌 광고", "온라인 직판", "외국 파트너 제휴", "해외 공장 설립"]
     }
     effective_strategies_map_data = {
-        "⚠️ 대규모 고객 데이터 유출 발생": "보안 시스템 전면 재구축",
+        "⚠️ 대규모 고객 데이터 유출": "보안 시스템 재구축",
         "📈 갑작스러운 수요 폭증": "생산 라인 확장",
         "💸 원자재 가격 급등": "공급처 다변화",
         "🔥 경쟁사 파산": "인재 채용 강화",
         "📉 주요 제품 매출 급감": "제품 리뉴얼",
-        "🏆 대기업으로부터 투자 제안": "지분 일부 매각",
+        "🏆 대기업 투자 제안": "지분 일부 매각",
         "🌍 글로벌 시장 진출 기회": "현지화 전략"
     }
     st.session_state.effective_strategies_map = effective_strategies_map_data
@@ -306,7 +304,7 @@ elif st.session_state.step == 3:
     st.markdown(f"📍 **상황:** {st.session_state.situation}")
     strategy = st.radio("🧠 당신의 전략은?", st.session_state.options)
 
-    if st.button("전략 확정"):
+    if st.button("전략 확정", key="confirm_strategy3"): # key 추가
         st.session_state.step3_strategy_selected = strategy
 
         if strategy == st.session_state.effective_strategies_map.get(st.session_state.situation):
@@ -328,10 +326,10 @@ elif st.session_state.step == 4:
     selected_strategy_for_feedback = st.session_state.get("step3_strategy_selected", "선택 없음")
 
     if score_earned_this_step == 10:
-        title = "“훌륭한 판단이었어!”"
+        title = "훌륭한 판단이었어!"
         subtitle = st.session_state.selected_strategy_feedback
     else:
-        title = "“음... 더 나은 전략도 있었을 거야.”"
+        title = "음... 더 나은 전략도 있었을 거야."
         subtitle = st.session_state.selected_strategy_feedback
 
     show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
@@ -349,30 +347,30 @@ elif st.session_state.step == 4:
     st.session_state.options = []
     st.session_state.selected_strategy_feedback = ""
 
-    if st.button("다음 이벤트 ▶️"):
+    if st.button("다음 이벤트 ▶️", key="next_event4"): # key 추가
         st.session_state.step = 5
         st.rerun()
 
 # ---
 ## Step 5: 국가적 위기 대응
 elif st.session_state.step == 5:
-    show_speech("“국가적 위기 발생!”", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
+    show_speech("국가적 위기 발생!", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
 
     crisis_situations = {
-        "📉 한국 외환시장 급변 (원화 가치 급락)": ["환 헤지 강화", "수출 확대", "정부와 협력", "외환 보유 확대", "위기 커뮤니케이션"],
-        "🇺🇸 미 연준의 기준금리 인상": ["대출 축소", "내수 집중 전략", "고금리 대비 자산 조정", "비용 구조 개선", "긴축 경영"],
-        "🗳️ 정치적 불확실성 증가": ["리스크 분산 경영", "정치 모니터링 강화", "내부 의사결정 체계 정비", "단기 전략 전환", "위기 대비 태스크포스 운영"],
-        "🇺🇸 트럼프 대통령 재취임": ["미국 중심 전략 강화", "공급망 재편", "관세 대비 물류 최적화", "현지 생산 강화", "미국 투자 확대"],
-        "🛃 주요 국가의 관세 인상 정책": ["무역 파트너 다변화", "현지 생산 확대", "비관세 수출 전략", "신시장 개척", "가격 재설정"]
+        "📉 외환시장 급변 (원화 급락)": ["환 헤지 강화", "수출 확대", "정부와 협력", "외환 보유 확대", "위기 커뮤니케이션"],
+        "🇺🇸 미 연준 금리 인상": ["대출 축소", "내수 집중 전략", "고금리 대비 자산 조정", "비용 구조 개선", "긴축 경영"],
+        "🗳️ 정치적 불확실성 증가": ["리스크 분산 경영", "정치 모니터링 강화", "내부 의사결정 체계 정비", "단기 전략 전환", "위기 태스크포스 운영"],
+        "🇺🇸 트럼프 재취임": ["미국 중심 전략 강화", "공급망 재편", "관세 대비 물류 최적화", "현지 생산 강화", "미국 투자 확대"],
+        "🛃 주요 국가 관세 인상": ["무역 파트너 다변화", "현지 생산 확대", "비관세 수출 전략", "신시장 개척", "가격 재설정"]
     }
 
     if "best_crisis_strategies_map" not in st.session_state or not st.session_state.best_crisis_strategies_map:
         best_strategies_map_data = {
-            "📉 한국 외환시장 급변 (원화 가치 급락)": "환 헤지 강화",
-            "🇺🇸 미 연준의 기준금리 인상": "고금리 대비 자산 조정",
+            "📉 외환시장 급변 (원화 급락)": "환 헤지 강화",
+            "🇺🇸 미 연준 금리 인상": "고금리 대비 자산 조정",
             "🗳️ 정치적 불확실성 증가": "리스크 분산 경영",
-            "🇺🇸 트럼프 대통령 재취임": "공급망 재편",
-            "🛃 주요 국가의 관세 인상 정책": "무역 파트너 다변화"
+            "🇺🇸 트럼프 재취임": "공급망 재편",
+            "🛃 주요 국가 관세 인상": "무역 파트너 다변화"
         }
         st.session_state.best_crisis_strategies_map = best_strategies_map_data
 
@@ -383,7 +381,7 @@ elif st.session_state.step == 5:
     st.markdown(f"**상황:** {st.session_state.crisis_situation}")
     crisis_strategy = st.radio("🧠 대응 전략을 선택하세요:", st.session_state.crisis_options)
 
-    if st.button("전략 확정"):
+    if st.button("전략 확정", key="confirm_strategy5"): # key 추가
         st.session_state.step5_strategy_selected = crisis_strategy
 
         if crisis_strategy == st.session_state.best_crisis_strategies_map.get(st.session_state.crisis_situation):
@@ -405,10 +403,10 @@ elif st.session_state.step == 6:
     selected_strategy_for_feedback = st.session_state.get("step5_strategy_selected", "선택 없음")
 
     if score_earned_this_step == 10:
-        title = "“최고의 경영자군!”"
+        title = "최고의 경영자군!"
         subtitle = st.session_state.selected_strategy_feedback + f" 총 점수: {st.session_state.score}점"
     else:
-        title = "“괜찮은 성과지만 아직 성장 가능성이 보여.”"
+        title = "괜찮은 성과지만 아직 성장 가능성이 보여."
         subtitle = st.session_state.selected_strategy_feedback + f" 총 점수: {st.session_state.score}점"
 
     show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
@@ -422,7 +420,7 @@ elif st.session_state.step == 6:
         del st.session_state.step5_strategy_selected
     st.session_state.selected_strategy_feedback = ""
 
-    if st.button("다음 이벤트 ▶️"):
+    if st.button("다음 이벤트 ▶️", key="next_event6"): # key 추가
         st.session_state.step = 7 # 다음 스텝으로 이동 (기존 Step 6)
         st.rerun()
 
@@ -438,12 +436,12 @@ elif st.session_state.step == 7:
     }
 
     if st.session_state.step7_state == "pending":
-        show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dlwlgh726/16-/main/KakaoTalk_Photo_2025-07-03-16-19-06 005.png")
+        show_speech("요즘 직원들 분위기가 심상치 않아...", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dlwlgh726/16-/main/KakaoTalk_Photo_2025-07-03-16-19-06 005.png")
         st.markdown("### Step 7: 내부 문제 해결 전략 선택")
 
         selected_org_strategy = st.radio("내부 문제를 해결할 전략을 선택하세요:", list(org_issues.keys()))
 
-        if st.button("전략 확정"):
+        if st.button("전략 확정", key="confirm_strategy7"): # key 추가
             st.session_state.step7_strategy_selected = selected_org_strategy
             st.session_state.score += org_issues[selected_org_strategy]
             st.session_state.step7_score_earned = org_issues[selected_org_strategy]
@@ -456,7 +454,7 @@ elif st.session_state.step == 7:
                 title_prefix = "기다리는 건 항상 좋은 선택은 아니지..."
 
             st.session_state.selected_strategy_feedback = (
-                f"“{title_prefix}”\n\n"
+                f"{title_prefix}\n\n"
                 f"{selected_org_strategy} 전략에 따른 점수: {st.session_state.step7_score_earned}점"
             )
 
@@ -464,7 +462,6 @@ elif st.session_state.step == 7:
             st.rerun()
 
     elif st.session_state.step7_state == "done":
-        # 피드백 화면
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
         title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
         subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
@@ -483,7 +480,7 @@ elif st.session_state.step == 7:
             del st.session_state.step7_strategy_selected
         st.session_state.selected_strategy_feedback = ""
 
-        if st.button("다음 이벤트 ▶️"):
+        if st.button("다음 이벤트 ▶️", key="next_event7"): # key 추가
             st.session_state.step = 8 # 다음 스텝으로 이동 (기존 Step 7)
             st.session_state.step7_state = "pending"
             st.rerun()
@@ -508,7 +505,7 @@ elif st.session_state.step == 8:
         }
 
     if st.session_state.step8_state == "pending":
-        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
+        show_speech("뜻밖의 일이 벌어졌어!", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
         st.markdown("### Step 8: 돌발 변수 등장")
 
         if st.session_state.current_event_name is None:
@@ -520,7 +517,7 @@ elif st.session_state.step == 8:
         st.markdown(f"**🌀 이벤트:** {st.session_state.current_event_name}")
         selected_event_strategy = st.radio("✅ 어떤 전략으로 대응할까요?", st.session_state.current_event_options)
 
-        if st.button("전략 확정"):
+        if st.button("전략 확정", key="confirm_strategy8"): # key 추가
             st.session_state.step8_strategy_selected = selected_event_strategy
 
             if selected_event_strategy == st.session_state.current_event_best_strategy:
@@ -533,7 +530,7 @@ elif st.session_state.step == 8:
                 title_prefix = "나쁘지 않은 대응이었어."
 
             st.session_state.selected_strategy_feedback = (
-                f"“{title_prefix}”\n\n"
+                f"{title_prefix}\n\n"
                 f"{selected_event_strategy} 전략으로 {st.session_state.step8_score_earned}점 획득!"
             )
 
@@ -561,7 +558,7 @@ elif st.session_state.step == 8:
         st.session_state.current_event_best_strategy = ""
         st.session_state.selected_strategy_feedback = ""
 
-        if st.button("다음 이벤트 ▶️"):
+        if st.button("다음 이벤트 ▶️", key="next_event8"): # key 추가
             st.session_state.step = 9 # 다음 스텝으로 이동 (기존 Step 8)
             st.session_state.step8_state = "pending"
             st.rerun()
@@ -572,12 +569,12 @@ elif st.session_state.step == 9:
     # 업종별 적합 전략 정의
     growth_strategies = {
         "💻 IT 스타트업": {
-            "options": ["광고 집중 (온라인/SNS)", "글로벌 시장 진출 (초기)", "유사 기업 M&A", "가격 인하 (시장 점유율 확대)", "프리미엄 서비스 전략"],
+            "options": ["광고 집중 (온라인/SNS)", "글로벌 시장 진출 (초기)", "유사 기업 M&A", "가격 인하", "프리미엄 서비스 전략"],
             "best": {
                 "광고 집중 (온라인/SNS)": 8,
                 "글로벌 시장 진출 (초기)": 10,
                 "유사 기업 M&A": 7,
-                "가격 인하 (시장 점유율 확대)": 5,
+                "가격 인하": 5,
                 "프리미엄 서비스 전략": 6
             }
         },
@@ -612,9 +609,9 @@ elif st.session_state.step == 9:
             }
         },
         "🍔 푸드테크": {
-            "options": ["신규 시장 (배달/케이터링) 확장", "R&D 투자 (대체육 등)", "물류 시스템 혁신", "프랜차이즈 확대", "건강식/맞춤형 푸드 서비스"],
+            "options": ["신규 시장 확장", "R&D 투자 (대체육 등)", "물류 시스템 혁신", "프랜차이즈 확대", "건강식/맞춤형 푸드 서비스"],
             "best": {
-                "신규 시장 (배달/케이터링) 확장": 8,
+                "신규 시장 확장": 8,
                 "R&D 투자 (대체육 등)": 10,
                 "물류 시스템 혁신": 7,
                 "프랜차이즈 확대": 6,
@@ -634,12 +631,12 @@ elif st.session_state.step == 9:
     }
 
     current_industry = st.session_state.industry
-    current_growth_data = growth_strategies.get(current_industry, {"options": [], "best": {}}) # 이름을 current_growth_options에서 current_growth_data로 변경하여 혼동 방지
+    current_growth_data = growth_strategies.get(current_industry, {"options": [], "best": {}})
 
     if st.session_state.step9_state == "pending":
-        show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/goodevent.png")
+        show_speech("제품이 시장에서 인기를 얻기 시작했어!", "이제 회사를 더욱 성장시킬 전략이 필요해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/goodevent.png")
 
-        st.markdown("### Step 9: 마케팅 또는 확장 전략 선택")
+        st.markdown("### Step 9: 성장 전략 선택")
         st.markdown(f"📍 **회사 업종:** {current_industry}")
 
         if not current_growth_data["options"]:
@@ -650,7 +647,7 @@ elif st.session_state.step == 9:
         else:
             selected_marketing_strategy = st.radio("📈 어떤 전략으로 회사를 성장시킬까요?", current_growth_data["options"])
 
-            if st.button("전략 확정"):
+            if st.button("전략 확정", key="confirm_strategy9"): # key 추가
                 st.session_state.step9_strategy_selected = selected_marketing_strategy
                 score_to_add = current_growth_data["best"].get(selected_marketing_strategy, 5) # 기본 5점
                 st.session_state.score += score_to_add
@@ -663,7 +660,7 @@ elif st.session_state.step == 9:
                     title_prefix = "성장을 위한 좋은 시도였어."
 
                 st.session_state.selected_strategy_feedback = (
-                    f"“{title_prefix}”\n\n"
+                    f"{title_prefix}\n\n"
                     f"{selected_marketing_strategy} 전략으로 {st.session_state.step9_score_earned}점 획득!"
                 )
                 
@@ -674,7 +671,7 @@ elif st.session_state.step == 9:
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
         title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
         subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
-        subtitle_bubble += f" (누적 점수: {st.session_state.score}점)" # 누적 점수를 말풍선 하단에 포함
+        subtitle_bubble += f" (누적 점수: {st.session_state.score}점)"
 
         show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 9: 마케팅 또는 확장 전략 결과")
@@ -686,11 +683,11 @@ elif st.session_state.step == 9:
             del st.session_state.step9_score_earned
         if "step9_strategy_selected" in st.session_state:
             del st.session_state.step9_strategy_selected
-        st.session_state.selected_strategy_feedback = "" # 피드백 메시지 초기화
+        st.session_state.selected_strategy_feedback = ""
 
-        if st.button("다음 이벤트 ▶️"):
+        if st.button("최종 리포트 확인 ▶️", key="next_event9"): # key 추가
             st.session_state.step = 10 # 다음 스텝 (리포트)으로 이동
-            st.session_state.step9_state = "pending" # 다음 게임을 위해 상태 초기화
+            st.session_state.step9_state = "pending"
             st.rerun()
 
 # ---
@@ -705,32 +702,32 @@ elif st.session_state.step == 10:
     employee_satisfaction = 70 + (final_score / 10) # 점수에 따라 직원 만족도 변화
     revenue_growth = 10 + (final_score / 10) * 3 # 점수에 따라 매출 증가율 변화
 
-    report_title = f"“{company_name}의 3년간 경영 리포트”"
+    report_title = f"{company_name}의 경영 리포트"
     report_subtitle = "당신의 선택이 회사를 이렇게 변화시켰습니다."
     show_speech(report_title, report_subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
-    st.markdown(f"### Step 10: {company_name}의 3년간 리포트")
-    st.write(f"CEO **{company_name}**님, 지난 3년간 당신의 경영 활동을 분석한 결과입니다.")
+    st.markdown(f"### Step 10: {company_name} 경영 리포트")
+    st.write(f"CEO **{company_name}**님, 지난 경영 활동 분석 결과입니다.")
 
     st.markdown("---")
     st.markdown("#### 📊 주요 경영 지표 변화")
-    st.markdown(f"- **시장 점유율**: 현재 **{market_share:.1f}%** ({'상승📈' if market_share > 20 else '하락📉' if market_share < 20 else '유지📊'})")
-    st.markdown(f"- **브랜드 평판**: **{brand_reputation:.1f}점** (100점 만점, {'매우 좋음👍' if brand_reputation > 80 else '좋음😊' if brand_reputation > 60 else '보통😐' if brand_reputation > 40 else '개선 필요😟'})")
-    st.markdown(f"- **직원 만족도**: **{employee_satisfaction:.1f}점** (100점 만점, {'높음😃' if employee_satisfaction > 80 else '보통🙂' if employee_satisfaction > 60 else '낮음🙁'})")
-    st.markdown(f"- **매출 증가율**: 연평균 **{revenue_growth:.1f}%** (목표 대비 {'초과 달성💰' if revenue_growth > 15 else '달성💸' if revenue_growth > 10 else '미달성🔻'})")
+    st.markdown(f"- **시장 점유율**: **{market_share:.1f}%** ({'상승📈' if market_share > 20 else '하락📉' if market_share < 20 else '유지📊'})")
+    st.markdown(f"- **브랜드 평판**: **{brand_reputation:.1f}점** ({'매우 좋음👍' if brand_reputation > 80 else '좋음😊' if brand_reputation > 60 else '보통😐'})")
+    st.markdown(f"- **직원 만족도**: **{employee_satisfaction:.1f}점** ({'높음😃' if employee_satisfaction > 80 else '보통🙂' if employee_satisfaction > 60 else '낮음🙁'})")
+    st.markdown(f"- **매출 증가율**: **{revenue_growth:.1f}%** ({'초과 달성💰' if revenue_growth > 15 else '달성💸' if revenue_growth > 10 else '미달성🔻'})")
     st.markdown("---")
 
     st.markdown("#### 📝 CEO의 피드백")
     if final_score >= 60:
-        st.success("“정말 탁월한 경영 능력을 보여주셨습니다! 당신의 리더십 덕분에 회사는 눈부신 성장을 이루었습니다. 시장을 선도하는 기업으로 자리매김했습니다.”")
+        st.success("“탁월한 경영! 회사는 눈부신 성장을 이뤘습니다.”")
     elif final_score >= 40:
-        st.info("“안정적인 성장세를 유지하며 중요한 고비들을 잘 넘겼습니다. 앞으로 더 큰 도약을 위한 발판을 마련했습니다.”")
+        st.info("“안정적 성장! 중요한 고비들을 잘 넘겼습니다.”")
     elif final_score >= 20:
-        st.warning("“몇몇 전략에서 아쉬운 점이 있었지만, 그래도 회사를 잘 이끌어 오셨습니다. 다음 기회에는 더 신중한 판단이 필요할 것 같습니다.”")
+        st.warning("“아쉬운 점도 있지만, 잘 이끌어 오셨습니다.”")
     else:
-        st.error("“경영 환경의 어려움을 극복하는 데는 한계가 있었습니다. 회사의 재정비와 새로운 전략 수립이 시급해 보입니다.”")
+        st.error("“경영 환경 어려움 극복에 한계가 있었습니다.”")
 
-    if st.button("최종 평가 확인 ▶️"):
+    if st.button("최종 평가 확인 ▶️", key="next_event10"): # key 추가
         st.session_state.step = 11 # 다음 스텝으로 이동 (최종 평가)
         st.rerun()
 
@@ -744,25 +741,24 @@ elif st.session_state.step == 11:
     image_url = ""
 
     if final_score >= 60:
-        title_bubble = "“글로벌 유니콘 기업 달성!”"
-        final_message = f"축하합니다, {company_name}는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
+        title_bubble = "글로벌 유니콘 기업 달성!"
+        final_message = f"축하합니다, **{company_name}**는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
     elif final_score >= 40:
-        title_bubble = "“안정적 성장!”"
-        final_message = f"잘하셨습니다, {company_name}는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
+        title_bubble = "안정적 성장!"
+        final_message = f"잘하셨습니다, **{company_name}**는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
     elif final_score >= 20:
-        title_bubble = "“재정비의 기회!”"
-        final_message = f"아쉽게도, {company_name}는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
+        title_bubble = "재정비의 기회!"
+        final_message = f"아쉽게도, **{company_name}**는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
     else:
-        title_bubble = "“혹독한 실패...”"
-        final_message = f"{company_name}는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
+        title_bubble = "혹독한 실패..."
+        final_message = f"**{company_name}**는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
 
     show_speech(title_bubble, final_message, image_url)
     st.markdown("### Step 11: 최종 평가")
-    image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png"
     st.success(f"당신의 최종 점수: **{final_score}점**")
     st.markdown(f"**{final_message}**")
 
@@ -773,6 +769,6 @@ elif st.session_state.step == 11:
     # 순위 표시
     show_full_rankings()
 
-    if st.button("다시 시작하기"):
+    if st.button("다시 시작하기", key="restart_game"): # key 추가
         st.session_state.reset_game = True
         st.rerun()
