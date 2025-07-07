@@ -145,11 +145,13 @@ button p {
 }
 
 /* 라디오 버튼의 라벨 및 선택지 텍스트 */
-.stRadio label {
-    color: white !important; /* 라디오 버튼의 라벨 (예: "대응 전략을 선택하세요:") */
+/* st.radio의 라벨 자체 (예: "대응 전략을 선택하세요:") */
+.stRadio > label {
+    color: white !important;
 }
+/* 각 라디오 버튼 선택지의 텍스트 (예: "환 헤지 강화") */
 .stRadio div[role="radiogroup"] label span {
-    color: white !important; /* 각 라디오 버튼 선택지의 텍스트 (예: "환 헤지 강화") */
+    color: white !important;
 }
 
 /* Checkbox의 라벨 텍스트 */
@@ -299,7 +301,9 @@ elif st.session_state.step == 3:
 
     st.markdown("<h3 style='color: white;'>Step 3: 전략 선택</h3>", unsafe_allow_html=True)
     st.markdown(f"<p style='color: white;'>📍 <b>상황:</b> {st.session_state.situation}</p>", unsafe_allow_html=True)
-    strategy = st.radio("<span style='color: white;'>🧠 당신의 전략은?</span>", st.session_state.options)
+    # 🧠 당신의 전략은? 이 부분을 st.markdown으로 먼저 출력하고 st.radio의 label은 빈 문자열로 둠
+    st.markdown("<span style='color: white;'>🧠 당신의 전략은?</span>", unsafe_allow_html=True)
+    strategy = st.radio("", st.session_state.options, key="step3_strategy_radio") # key 추가
 
     if st.button("전략 확정"):
         st.session_state.step3_strategy_selected = strategy
@@ -376,10 +380,9 @@ elif st.session_state.step == 5:
 
     st.markdown("<h3 style='color: white;'>Step 5: 국가적 위기 대응</h3>", unsafe_allow_html=True)
     st.markdown(f"<p style='color: white;'><b>상황:</b> {st.session_state.crisis_situation}</p>", unsafe_allow_html=True)
-    # 라디오 버튼의 라벨과 옵션 텍스트 색상 수정
-    st.markdown("<span style='color: white;'>🧠 대응 전략을 선택하세요:</span>", unsafe_allow_html=True) # 이 부분이 문제였음: st.radio 라벨 인자를 직접 HTML로 넘기는 방식 변경
-    crisis_strategy = st.radio("", st.session_state.crisis_options, key="crisis_radio") # key 추가
-    # st.radio("🧠 대응 전략을 선택하세요:", st.session_state.crisis_options) # 기존 코드
+    # 이 부분을 수정: st.radio 라벨 인자를 직접 HTML로 넘기는 방식 대신 st.markdown을 사용
+    st.markdown("<span style='color: white;'>🧠 대응 전략을 선택하세요:</span>", unsafe_allow_html=True)
+    crisis_strategy = st.radio("", st.session_state.crisis_options, key="crisis_radio")
 
     if st.button("전략 확정"):
         st.session_state.step5_strategy_selected = crisis_strategy
@@ -440,7 +443,7 @@ elif st.session_state.step == 7:
         st.markdown("<h3 style='color: white;'>Step 7: 내부 문제 해결 전략 선택</h3>", unsafe_allow_html=True)
 
         st.markdown("<span style='color: white;'>내부 문제를 해결할 전략을 선택하세요:</span>", unsafe_allow_html=True)
-        selected_org_strategy = st.radio("", list(org_issues.keys()), key="org_issues_radio") # key 추가
+        selected_org_strategy = st.radio("", list(org_issues.keys()), key="org_issues_radio")
 
         if st.button("전략 확정"):
             st.session_state.step7_strategy_selected = selected_org_strategy
@@ -518,7 +521,7 @@ elif st.session_state.step == 8:
 
         st.markdown(f"<p style='color: white;'><b>🌀 이벤트:</b> {st.session_state.current_event_name}</p>", unsafe_allow_html=True)
         st.markdown("<span style='color: white;'>✅ 어떤 전략으로 대응할까요?</span>", unsafe_allow_html=True)
-        selected_event_strategy = st.radio("", st.session_state.current_event_options, key="event_strategy_radio") # key 추가
+        selected_event_strategy = st.radio("", st.session_state.current_event_options, key="event_strategy_radio")
 
         if st.button("전략 확정"):
             st.session_state.step8_strategy_selected = selected_event_strategy
@@ -649,7 +652,7 @@ elif st.session_state.step == 9:
                 st.rerun()
         else:
             st.markdown("<span style='color: white;'>📈 어떤 전략으로 회사를 성장시킬까요?</span>", unsafe_allow_html=True)
-            selected_marketing_strategy = st.radio("", current_growth_data["options"], key="marketing_strategy_radio") # key 추가
+            selected_marketing_strategy = st.radio("", current_growth_data["options"], key="marketing_strategy_radio")
 
             if st.button("전략 확정"):
                 st.session_state.step9_strategy_selected = selected_marketing_strategy
