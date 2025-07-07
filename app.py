@@ -263,8 +263,8 @@ def show_speech(title: str, subtitle: str, image_url: str):
 # ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    # 말풍선 안에 Streamlit 버튼 포함시키기 위해 columns 사용
-    col1, col2, col3 = st.columns([1, 4, 1])  # 중앙 정렬
+    # Use columns to center the content, including the button
+    col1, col2, col3 = st.columns([1, 4, 1])  # Central column for content
 
     with col2:
         st.markdown("""
@@ -275,10 +275,11 @@ if st.session_state.step == 0:
                     <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용 중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
                 </div>
             </div>
-            <br><br><br>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+        # Add some vertical space to make sure the button is not directly on top of the speech bubble
+        # This margin-top pushes the button down without using a fixed height div.
+        st.markdown("<div style='margin-top: 60vh;'></div>", unsafe_allow_html=True) # Adjust this value as needed
 
-        # ✅ 버튼은 말풍선 바로 아래에서 Streamlit 코드로 출력
         if st.button("게임 시작 ▶️", use_container_width=True):
             st.session_state.step = 1
             st.rerun()
@@ -787,24 +788,20 @@ elif st.session_state.step == 10:
 
     st.markdown("<hr style='border: 1px solid white;'>", unsafe_allow_html=True)
     st.markdown("<h4 style='color: white;'>📊 주요 경영 지표 변화</h4>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color: white;'>- <b>시장 점유율</b>: 현재 <b>{market_share:.1f}%</b> ({'상승📈' if market_share > 20 else '하락📉' if market_share < 20 else '유지📊'})</p>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color: white;'>- <b>브랜드 평판</b>: <b>{brand_reputation:.1f}점</b> (100점 만점, {'매우 좋음👍' if brand_reputation > 80 else '좋음😊' if brand_reputation > 60 else '보통😐' if brand_reputation > 40 else '개선 필요😟'})</p>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color: white;'>- <b>직원 만족도</b>: <b>{employee_satisfaction:.1f}점</b> (100점 만점, {'높음😃' if employee_satisfaction > 80 else '보통🙂' if employee_satisfaction > 60 else '낮음🙁'})</p>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color: white;'>- <b>매출 증가율</b>: 연평균 <b>{revenue_growth:.1f}%</b> (목표 대비 {'초과 달성💰' if revenue_growth > 15 else '달성💸' if revenue_growth > 10 else '미달성🔻'})</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: white;'>- <b>시장 점유율</b>: 현재 <b>{market_share:.1f}%</b></p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: white;'>- <b>브랜드 평판</b>: 현재 <b>{brand_reputation:.1f}%</b></p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: white;'>- <b>직원 만족도</b>: 현재 <b>{employee_satisfaction:.1f}%</b></p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: white;'>- <b>매출 증가율</b>: 현재 <b>{revenue_growth:.1f}%</b></p>", unsafe_allow_html=True)
+
     st.markdown("<hr style='border: 1px solid white;'>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: white;'>⭐ 최종 점수</h4>", unsafe_allow_html=True)
+    st.info(f"축하합니다! 당신의 최종 경영 점수는 **{final_score}점** 입니다.")
 
-    st.markdown("<h4 style='color: white;'>📝 CEO의 피드백</h4>", unsafe_allow_html=True)
-    if final_score >= 60:
-        st.success("“정말 탁월한 경영 능력을 보여주셨습니다! 당신의 리더십 덕분에 회사는 눈부신 성장을 이루었습니다. 시장을 선도하는 기업으로 자리매김했습니다.”")
-    elif final_score >= 40:
-        st.info("“안정적인 성장세를 유지하며 중요한 고비들을 잘 넘겼습니다. 앞으로 더 큰 도약을 위한 발판을 마련했습니다.”")
-    elif final_score >= 20:
-        st.warning("“몇몇 전략에서 아쉬운 점이 있었지만, 그래도 회사를 잘 이끌어 오셨습니다. 다음 기회에는 더 신중한 판단이 필요할 것 같습니다.”")
-    else:
-        st.error("“경영 환경의 어려움을 극복하는 데는 한계가 있었습니다. 회사의 재정비와 새로운 전략 수립이 시급해 보입니다.”")
+    # Removed direct saving and showing rankings here, it will be done in Step 11
+    # Removed feedback input here, it's also simplified in Step 11 for replayability
 
-    if st.button("최종 평가 확인 ▶️"):
-        st.session_state.step = 11 # 다음 스텝으로 이동 (최종 평가)
+    if st.button("최종 결과 보기 ▶️", use_container_width=True):
+        st.session_state.step = 11 # Transition to the new Step 11 for final evaluation
         st.rerun()
 
 # ---
