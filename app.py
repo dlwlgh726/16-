@@ -93,7 +93,6 @@ html, body, [data-testid="stApp"] {
     background-color: #1a1a1a; /* 배경 색상 */
     color: #ffffff; /* 기본 텍스트 색상 */
     /* 배경 이미지 추가 */
-    background-image: url("https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png"); /* 기본 CEO 이미지 */
     background-size: cover; /* 화면을 꽉 채우도록 설정 */
     background-position: center bottom; /* 중앙 하단 정렬 */
     background-repeat: no-repeat; /* 반복 없음 */
@@ -780,6 +779,65 @@ elif st.session_state.step == 10:
 
     st.markdown("---")
     st.markdown("#### 📊 주요 경영 지표 변화")
+    # Corrected f-strings: ensuring no newlines within format specifiers for single-quoted f-strings
     st.markdown(f"- **시장 점유율**: **{market_share:.1f}%** ({'상승📈' if market_share > 20 else '하락📉' if market_share < 20 else '유지📊'})")
     st.markdown(f"- **브랜드 평판**: **{brand_reputation:.1f}점** ({'매우 좋음👍' if brand_reputation > 80 else '좋음😊' if brand_reputation > 60 else '보통😐'})")
-    st.markdown(f"- **직원 만족도**: **{employee_satisfaction:.1f
+    st.markdown(f"- **직원 만족도**: **{employee_satisfaction:.1f}점** ({'높음😃' if employee_satisfaction > 80 else '보통🙂' if employee_satisfaction > 60 else '낮음🙁'})")
+    st.markdown(f"- **매출 증가율**: **{revenue_growth:.1f}%** ({'초과 달성💰' if revenue_growth > 15 else '달성💸' if revenue_growth > 10 else '미달성🔻'})")
+    st.markdown("---")
+
+    st.markdown("#### 📝 CEO의 피드백")
+    if final_score >= 60:
+        st.success("“탁월한 경영! 회사는 눈부신 성장을 이뤘습니다.”")
+    elif final_score >= 40:
+        st.info("“안정적 성장! 중요한 고비들을 잘 넘겼습니다.”")
+    elif final_score >= 20:
+        st.warning("“아쉬운 점도 있지만, 잘 이끌어 오셨습니다.”")
+    else:
+        st.error("“경영 환경 어려움 극복에 한계가 있었습니다.”")
+
+    if st.button("최종 평가 확인 ▶️", key="next_event10"): # key 추가
+        st.session_state.step = 11 # 다음 스텝으로 이동 (최종 평가)
+        st.rerun()
+
+# ---
+## Step 11: 최종 평가 및 엔딩 분기 (이전 Step 10)
+elif st.session_state.step == 11:
+    final_score = st.session_state.score
+    company_name = st.session_state.company_name
+    final_message = ""
+    title_bubble = ""
+    image_url = ""
+
+    if final_score >= 60:
+        title_bubble = "글로벌 유니콘 기업 달성!"
+        final_message = f"축하합니다, **{company_name}**는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
+    elif final_score >= 40:
+        title_bubble = "안정적 성장!"
+        final_message = f"잘하셨습니다, **{company_name}**는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
+    elif final_score >= 20:
+        title_bubble = "재정비의 기회!"
+        final_message = f"아쉽게도, **{company_name}**는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
+    else:
+        title_bubble = "혹독한 실패..."
+        final_message = f"**{company_name}**는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
+
+    show_speech(title_bubble, final_message, image_url)
+    st.markdown("### Step 11: 최종 평가")
+    st.success(f"당신의 최종 점수: **{final_score}점**")
+    st.markdown(f"**{final_message}**")
+
+    st.write("---")
+    st.markdown("#### 🏆 전체 플레이어 순위")
+    # 점수 저장
+    save_to_ranking(company_name, final_score)
+    # 순위 표시
+    show_full_rankings()
+
+    if st.button("다시 시작하기", key="restart_game"): # key 추가
+        st.session_state.reset_game = True
+        st.rerun()
