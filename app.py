@@ -83,13 +83,16 @@ def show_full_rankings():
 # ✅ 공통 CSS 스타일 (한 번만 정의 - initialize_session_state() 아래에 배치)
 st.markdown("""
 <style>
-body {
+/* 전체 앱 배경색 및 텍스트 색상 */
+html, body, [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"] {
     background-color: #1a1a1a !important;
     color: #ffffff !important;
 }
+/* 모든 텍스트 및 기본 요소 색상 */
 h1, h2, h3, h4, h5, h6, label, p, span, div {
-    color: inherit !important; /* 부모 요소의 색상을 상속 */
+    color: #ffffff !important;
 }
+/* Streamlit selectbox 배경 및 텍스트 색상 */
 div[data-baseweb="select"] {
     background-color: #ffffff !important;
 }
@@ -97,28 +100,55 @@ div[data-baseweb="select"] * {
     color: #000000 !important;
     fill: #000000 !important;
 }
+div[data-baseweb="select"] div[data-testid="stMarkdownContainer"] {
+    color: #000000 !important;
+}
+/* 버튼 텍스트 색상 */
 button p {
     color: #000000 !important;
     font-weight: bold;
 }
 
-/* CEO 이미지와 말풍선 고정 스타일 */
-.fixed-ceo-image {
+/* --- 이미지 및 말풍선 관련 --- */
+/* 컨테이너: 이미지와 말풍선을 담고, 스크롤 영역과 분리 */
+.container {
     position: fixed; /* 화면에 고정 */
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: auto;
-    height: 70vh; /* 화면 높이의 70% 정도 */
-    max-width: 100%;
-    object-fit: contain;
-    z-index: 1000; /* 다른 UI 요소보다 위에 오도록 높은 z-index 설정 */
-    pointer-events: none; /* 이미지 자체는 클릭 안 되도록 (말풍선 클릭 가능) */
+    top: 0; left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden; /* 내용이 넘치면 숨김 */
+    margin: 0;
+    padding: 0;
+    z-index: 0; /* 모든 Streamlit 콘텐츠 뒤에 배치 */
 }
 
-.fixed-speech-bubble {
-    position: fixed; /* 화면에 고정 */
-    bottom: 8vh; /* CEO 이미지 위쪽으로 조절 */
+/* 배경 이미지: 컨테이너 내에서 전체를 덮고 가장 뒤에 위치 */
+.bg-image {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100vh;
+    object-fit: cover; /* 이미지를 잘라내더라도 화면을 꽉 채움 */
+    z-index: 0;
+}
+
+/* CEO 이미지 (talking ceo.png)를 위한 중앙 하단 정렬 스타일 */
+.bg-image.centered {
+    position: absolute;
+    left: 50%;
+    bottom: 0; /* 하단에 고정 */
+    transform: translateX(-50%);
+    width: auto; /* 원본 비율 유지 */
+    height: 80vh; /* 화면 높이의 80% 정도 */
+    max-width: 100%; /* 너비가 화면을 넘지 않도록 */
+    object-fit: contain; /* 비율 유지하며 이미지 전체 보이도록 */
+    z-index: 1; /* 일반 배경 이미지보다 위에 */
+}
+
+/* 말풍선: CEO 이미지 위에 위치 */
+.speech-bubble {
+    position: absolute;
+    bottom: 8vh; /* CEO 이미지보다 약간 위로 */
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -126,9 +156,9 @@ button p {
     background: rgba(255, 255, 255, 0.1);
     padding: 20px 25px;
     border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     text-align: center;
-    z-index: 1001; /* 말풍선이 CEO 이미지 위에 오도록 */
+    z-index: 2; /* CEO 이미지 및 배경 이미지보다 위에 */
     backdrop-filter: blur(8px);
 }
 .speech-title {
@@ -142,50 +172,49 @@ button p {
     color: #f0f0f0;
 }
 
-/* Streamlit 기본 마진 및 패딩 조정 */
+/* Streamlit 메인 콘텐츠 영역 (stApp)의 상단 패딩 조절 */
+/* CEO 이미지와 말풍선이 차지하는 공간만큼 아래에 패딩을 추가하여 콘텐츠가 가려지지 않도록 함 */
+/* 스크롤 가능한 영역 확보 */
 .stApp {
-    padding-bottom: 25vh; /* CEO 이미지와 말풍선이 차지하는 공간만큼 아래에 패딩 추가 */
+    padding-top: 20px; /* 상단 여백 */
+    padding-bottom: 300px; /* 말풍선과 CEO 이미지가 가리지 않도록 충분한 패딩 제공 */
+    /* stApp에 z-index를 직접 설정하는 대신, 기본 흐름을 따르도록 함 */
+    position: relative; /* z-index를 위해 필요할 수 있지만, 기본적으로는 필요 없음 */
+    z-index: 10; /* 이미지 및 말풍선보다 위에 오도록 높은 z-index 설정 */
+    background: none; /* 배경 이미지가 별도 컨테이너에 있으므로 앱 자체 배경은 투명하게 */
 }
 
-/* 특정 배경 이미지 스타일 (옵션) */
-.dynamic-background-image {
-    width: 100%;
-    height: 100%; /* 부모 컨테이너에 맞춰짐 */
-    object-fit: cover;
-    opacity: 0.3; /* 투명도 조절 */
-    position: absolute; /* 컨테이너 내에서 절대 위치 */
-    top: 0;
-    left: 0;
-    z-index: 0; /* 모든 콘텐츠 아래로 */
+/* Streamlit의 데이터프레임 헤더 색상 조정 (선택 사항) */
+.stDataFrameHeader {
+    background-color: #333333 !important;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
 
-# ✅ CEO 말풍선 출력 함수 (하단 고정)
-def display_ceo_dialogue(title: str, subtitle: str, image_url: str = "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png"):
-    """CEO 이미지와 말풍선을 화면 하단에 고정하여 렌더링합니다."""
+# ✅ 말풍선 출력 함수 (이전 방식 유지, CSS z-index로 제어)
+def show_speech(title: str, subtitle: str, image_url: str):
+    """말풍선과 배경 이미지를 포함한 UI를 렌더링합니다."""
+    # 특정 이미지 URL에 따라 클래스를 다르게 적용
+    # talking ceo.png는 하단 고정, 다른 이미지는 전체 배경
+    image_class = "bg-image centered" if "talking%20ceo.png" in image_url else "bg-image"
+    
+    # 임시 컨테이너를 사용하여 배경 이미지만을 위한 공간을 만들고 z-index로 겹침 제어
     st.markdown(f"""
-    <img src="{image_url}" class="fixed-ceo-image">
-    <div class="fixed-speech-bubble">
-        <div class="speech-title">{title}</div>
-        <div class="speech-sub">{subtitle}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ---
-# 중앙에 위치할 수 있는 동적 배경 이미지 함수 (일반 Streamlit 흐름을 따름)
-def display_dynamic_background(image_url: str):
-    st.markdown(f"""
-    <div style="position: relative; width: 100%; height: 400px; overflow: hidden; margin-bottom: 20px;">
-        <img src="{image_url}" class="dynamic-background-image">
+    <div class="container">
+        <img src="{image_url}" class="{image_class}">
+        <div class="speech-bubble">
+            <div class="speech-title">{title}</div>
+            <div class="speech-sub">{subtitle}</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 # ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    display_ceo_dialogue("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.")
+    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     st.markdown("### 경영 시뮬레이션 게임에 오신 것을 환영합니다!")
     st.markdown("이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!")
     if st.button("게임 시작 ▶️"):
@@ -196,9 +225,9 @@ if st.session_state.step == 0:
 ## Step 1: 업종 선택
 elif st.session_state.step == 1:
     if not st.session_state.industry_confirmed:
-        display_ceo_dialogue("“좋아, 이제 우리가 어떤 산업에 뛰어들지 결정할 시간이군.”", "어떤 분야에서 승부할지, 네 선택을 보여줘.")
+        show_speech("“좋아, 이제 우리가 어떤 산업에 뛰어들지 결정할 시간이군.”", "어떤 분야에서 승부할지, 네 선택을 보여줘.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
-        display_ceo_dialogue(f"“{st.session_state.industry}... 흥미로운 선택이군.”", "다음 단계로 가볼까?")
+        show_speech(f"“{st.session_state.industry}... 흥미로운 선택이군.”", "다음 단계로 가볼까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 1: 회사 분야 선택")
     industries = ["💻 IT 스타트업", "🌱 친환경 제품", "🎮 게임 개발사", "👗 패션 브랜드", "🍔 푸드테크", "🛒 글로벌 전자상거래"]
@@ -220,9 +249,9 @@ elif st.session_state.step == 1:
 ## Step 2: 회사 이름 입력
 elif st.session_state.step == 2:
     if not st.session_state.company_name:
-        display_ceo_dialogue("“이제 회사를 설립할 시간이야.”", "멋진 회사 이름을 지어보자!")
+        show_speech("“이제 회사를 설립할 시간이야.”", "멋진 회사 이름을 지어보자!", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
-        display_ceo_dialogue(f"“{st.session_state.company_name}... 멋진 이름이군!”", "이제 다음 단계로 넘어가자.")
+        show_speech(f"“{st.session_state.company_name}... 멋진 이름이군!”", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 2: 회사 이름 입력")
     name_input = st.text_input("당신의 회사 이름은?", max_chars=20)
@@ -241,8 +270,7 @@ elif st.session_state.step == 2:
 # ---
 ## Step 3: 전략 선택 (예기치 못한 사건)
 elif st.session_state.step == 3:
-    display_dynamic_background("https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
-    display_ceo_dialogue("“예기치 못한 사건 발생!”", "상황에 적절한 전략을 선택해 회사를 지켜내자.")
+    show_speech("“예기치 못한 사건 발생!”", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
 
     situations = {
         "⚠️ 대규모 고객 데이터 유출 발생": ["보안 시스템 전면 재구축", "PR 대응", "사과문 발표", "외부 컨설턴트 투입", "서비스 일시 중단"],
@@ -299,7 +327,7 @@ elif st.session_state.step == 4:
         title = "“음... 더 나은 전략도 있었을 거야.”"
         subtitle = st.session_state.selected_strategy_feedback
 
-    display_ceo_dialogue(title, subtitle)
+    show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 4: 결과 분석")
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
@@ -321,8 +349,7 @@ elif st.session_state.step == 4:
 # ---
 ## Step 5: 국가적 위기 대응
 elif st.session_state.step == 5:
-    display_dynamic_background("https://raw.githubusercontent.com/dddowobbb/simulator1/main/global_crisis.png") # 국가적 위기 이미지
-    display_ceo_dialogue("“국가적 위기 발생!”", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.")
+    show_speech("“국가적 위기 발생!”", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/global_crisis.png")
 
     crisis_situations = {
         "📉 한국 외환시장 급변 (원화 가치 급락)": ["환 헤지 강화", "수출 확대", "정부와 협력", "외환 보유 확대", "위기 커뮤니케이션"],
@@ -377,7 +404,7 @@ elif st.session_state.step == 6:
         title = "“괜찮은 성과지만 아직 성장 가능성이 보여.”"
         subtitle = st.session_state.selected_strategy_feedback + f" 총 점수: {st.session_state.score}점"
 
-    display_ceo_dialogue(title, subtitle)
+    show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     st.markdown("### Step 6: 국가적 위기 대응 결과")
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
     st.info(f"현재 점수: **{st.session_state.score}점**")
@@ -404,8 +431,7 @@ elif st.session_state.step == 7:
     }
 
     if st.session_state.step7_state == "pending":
-        display_dynamic_background("https://raw.githubusercontent.com/dddowobbb/simulator1/main/internal_issues.png") # 내부 문제 이미지
-        display_ceo_dialogue("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?")
+        show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/internal_issues.png")
         st.markdown("### Step 7: 내부 문제 해결 전략 선택")
 
         selected_org_strategy = st.radio("내부 문제를 해결할 전략을 선택하세요:", list(org_issues.keys()))
@@ -437,7 +463,7 @@ elif st.session_state.step == 7:
         subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
         subtitle_bubble += f" (누적 점수: {st.session_state.score}점)"
 
-        display_ceo_dialogue(title_bubble, subtitle_bubble)
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
         st.markdown("### Step 7: 내부 문제 해결 결과")
         st.success(f"당신의 전략: **{st.session_state.step7_strategy_selected}**")
@@ -475,8 +501,7 @@ elif st.session_state.step == 8:
         }
 
     if st.session_state.step8_state == "pending":
-        display_dynamic_background("https://raw.githubusercontent.com/dddowobbb/simulator1/main/random_event.png") # 돌발 변수 이미지
-        display_ceo_dialogue("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.")
+        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/random_event.png")
         st.markdown("### Step 8: 돌발 변수 등장")
 
         if st.session_state.current_event_name is None:
@@ -514,7 +539,7 @@ elif st.session_state.step == 8:
         subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
         subtitle_bubble += f" (총 점수: {st.session_state.score}점)"
 
-        display_ceo_dialogue(title_bubble, subtitle_bubble)
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 8: 돌발 변수 결과")
         st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
         st.info(f"총 점수: **{st.session_state.score}점**")
@@ -537,8 +562,7 @@ elif st.session_state.step == 8:
 # ---
 ## Step 9: 마케팅 또는 확장 전략 선택 (이전 Step 8)
 elif st.session_state.step == 9:
-    display_dynamic_background("https://raw.githubusercontent.com/dddowobbb/simulator1/main/growing_business.png") # 사업 성장 이미지
-    display_ceo_dialogue("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.")
+    show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/growing_business.png")
 
     # 업종별 적합 전략 정의
     growth_strategies = {
@@ -643,7 +667,7 @@ elif st.session_state.step == 9:
         subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
         subtitle_bubble += f" (누적 점수: {st.session_state.score}점)"
 
-        display_ceo_dialogue(title_bubble, subtitle_bubble)
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 9: 마케팅 또는 확장 전략 결과")
         st.success(f"당신의 전략: **{st.session_state.step9_strategy_selected}**")
         st.info(f"누적 점수: **{st.session_state.score}점**")
@@ -674,7 +698,7 @@ elif st.session_state.step == 10:
 
     report_title = f"“{company_name}의 3년간 경영 리포트”"
     report_subtitle = "당신의 선택이 회사를 이렇게 변화시켰습니다."
-    display_ceo_dialogue(report_title, report_subtitle)
+    show_speech(report_title, report_subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown(f"### Step 10: {company_name}의 3년간 리포트")
     st.write(f"CEO **{company_name}**님, 지난 3년간 당신의 경영 활동을 분석한 결과입니다.")
@@ -727,7 +751,7 @@ elif st.session_state.step == 11:
         final_message = f"{company_name}는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
         image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/sad_ceo.png" # 슬픈 CEO 이미지
 
-    display_ceo_dialogue(title_bubble, final_message, image_url)
+    show_speech(title_bubble, final_message, image_url)
     st.markdown("### Step 11: 최종 평가")
     st.success(f"당신의 최종 점수: **{final_score}점**")
     st.markdown(f"**{final_message}**")
