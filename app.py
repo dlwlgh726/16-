@@ -52,7 +52,32 @@ def initialize_session_state():
 initialize_session_state()
 
 # ---
-#
+# ✅ 로컬 파일 기반 순위 시스템 함수
+RANK_FILE = "rankings.csv"
+
+def save_to_ranking(company_name, final_score):
+    """회사명과 점수를 rankings.csv에 저장"""
+    new_entry = pd.DataFrame([{"company_name": company_name, "score": final_score}])
+
+    if os.path.exists(RANK_FILE):
+        existing = pd.read_csv(RANK_FILE)
+        updated = pd.concat([existing, new_entry], ignore_index=True)
+    else:
+        updated = new_entry
+
+    updated.to_csv(RANK_FILE, index=False)
+    # st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점") # 최종 단계에서만 표시
+
+def show_full_rankings():
+    """전체 순위 출력 (내림차순 정렬)"""
+    if os.path.exists(RANK_FILE):
+        df = pd.read_csv(RANK_FILE)
+        df_sorted = df.sort_values(by="score", ascending=False).reset_index(drop=True)
+        df_sorted.index = df_sorted.index + 1  # 1부터 시작하는 순위
+        st.markdown("### 🏁 전체 플레이어 순위표")
+        st.dataframe(df_sorted, use_container_width=True)
+    else:
+        st.info("아직 저장된 기록이 없습니다.")
 
 # ---
 # ✅ 공통 CSS 스타일 (전체 화면 배경 및 말풍선 UI 고정)
