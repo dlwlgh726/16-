@@ -41,12 +41,12 @@ def initialize_session_state():
 
     if st.session_state.get("reset_game", False):
         for key in list(st.session_state.keys()):
-            del st.session_state[[key]]
+            del st.session_state[key] # ✅ 수정: del st.session_state[[key]] -> del st.session_state[key]
         st.session_state.reset_game = False
 
     for key, value in defaults.items():
         if key not in st.session_state:
-            st.session_state[[key]] = value
+            st.session_state[key] = value # ✅ 수정: st.session_state[[key]] = value -> st.session_state[key] = value
 
 initialize_session_state()
 
@@ -104,8 +104,8 @@ st.markdown("""
 <style>
 body { background-color: #1a1a1a; color: #ffffff; }
 h1, h2, h3, h4, h5, h6, label, p, span, div { color: inherit; }
-div[[data-baseweb="select"]] { background-color: #ffffff; color: #000000; }
-div[[data-baseweb="select"]] * { color: #000000; fill: #000000; }
+div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
+div[data-baseweb="select"] * { color: #000000; fill: #000000; }
 button p { color: #000000; font-weight: bold; }
 .container { position: relative; width: 100%; height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #1a1a1a; }
 
@@ -137,15 +137,18 @@ button p { color: #000000; font-weight: bold; }
 def show_speech(title: str, subtitle: str, image_url: str):
     """말풍선과 배경 이미지를 포함한 UI를 렌더링합니다."""
     # 더 이상 특정 이미지에 따라 클래스를 변경할 필요가 없음
-    image_class = "bg-image"
+    image_class = "bg-image" # 이 변수는 이제 실제로 사용되지 않지만, 이전 코드와의 일관성을 위해 남겨둠.
+
+    # 이미지를 포함한 전체 컨테이너를 하나로 묶어 마크다운으로 렌더링
+    # 배경 이미지를 표시하는 img 태그를 추가
     st.markdown(f"""
-    
-        
-            
-                {title}
-                {subtitle}
-            
-        
+    <div class="container">
+        <img class="{image_class}" src="{image_url}">
+        <div class="speech-bubble">
+            <div class="speech-title">{title}</div>
+            <div class="speech-sub">{subtitle}</div>
+        </div>
+    </div>
     """, unsafe_allow_html=True)
 
 
@@ -158,8 +161,6 @@ if st.session_state.step == 0:
     if st.button("게임 시작 ▶️"):
         st.session_state.step = 1
         st.rerun()
-
-
 
 
 # ---
