@@ -38,7 +38,7 @@ def initialize_session_state():
         "step7_state": "pending",
         "step8_state": "pending",
         "step9_state": "pending",
-        # 기본 배경 이미지 URL 설정
+        # 기본 배경 이미지 URL 설정 (초기 로딩 시)
         "background_image_url": "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
 
@@ -87,7 +87,7 @@ def show_full_rankings():
 st.markdown(f"""
 <style>
 /* 기본 앱 컨테이너 설정 */
-html, body, [data-testid="stApp"] {
+html, body, [data-testid="stApp"] {{
     margin: 0;
     padding: 0;
     height: 100%;
@@ -98,10 +98,10 @@ html, body, [data-testid="stApp"] {
     background-position: center; /* 이미지 중앙 정렬 */
     background-repeat: no-repeat; /* 반복 방지 */
     color: #ffffff; /* 기본 텍스트 색상 */
-}
+}}
 
 /* Streamlit 메인 콘텐츠 컨테이너 설정 */
-.main .block-container {
+.main .block-container {{
     padding-top: 0.5rem; /* 여백 최소화 */
     padding-bottom: 0.5rem; /* 여백 최소화 */
     height: 100vh; /* 전체 뷰포트 높이 사용, 스크롤 방지 */
@@ -113,42 +113,42 @@ html, body, [data-testid="stApp"] {
     align-items: center; /* 가로 중앙 정렬 */
     width: 100%; /* 전체 너비 사용 */
     background-color: rgba(0, 0, 0, 0.3); /* 배경 이미지 위에 약간 어두운 투명 배경 추가 (선택 사항) */
-}
+}}
 
 /* 텍스트 중앙 정렬 */
 .stMarkdown, .stText, .stAlert, .stSuccess, .stInfo, .stWarning, .stError,
 h1, h2, h3, h4, h5, h6, label, p, .stRadio > label > div, .stCheckbox > label > div,
-div[data-testid^="stMarkdownContainer"] { /* st.markdown으로 생성되는 div도 포함 */
+div[data-testid^="stMarkdownContainer"]] {{ /* st.markdown으로 생성되는 div도 포함 */
     text-align: center !important;
     width: 100%; /* 중앙 정렬을 위해 너비 100% 확보 */
     font-size: 0.95rem; /* 글꼴 크기 약간 줄임 */
-}
+}}
 
-h3 { /* 특정 헤더 크기 조정 */
+h3 {{ /* 특정 헤더 크기 조정 */
     font-size: 1.2rem !important;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-}
-h4 {
+}}
+h4 {{
     font-size: 1.1rem !important;
     margin-top: 0.4rem;
     margin-bottom: 0.4rem;
-}
+}}
 
 /* 텍스트 입력 필드의 placeholder 텍스트 및 입력된 텍스트 중앙 정렬 */
 .stTextInput > div > div > input::placeholder,
-.stTextInput > div > div > input {
+.stTextInput > div > div > input {{
     text-align: center !important;
     font-size: 0.9rem; /* 입력 필드 텍스트 크기 */
-}
+}}
 
 /* 선택지 글자 흰색으로 강제 설정 */
-label, .stRadio label, .stMarkdown {
+label, .stRadio label, .stMarkdown {{
     color: white !important;
-}
+}}
 
 /* Streamlit 버튼 스타일 조정 및 중앙 정렬 */
-.stButton>button {
+.stButton>button {{
     width: 80%; /* 버튼 너비 조정 */
     max-width: 300px; /* 최대 너비 설정 */
     padding: 8px 0; /* 패딩 줄임 */
@@ -163,41 +163,41 @@ label, .stRadio label, .stMarkdown {
     cursor: pointer;
     font-size: 1rem; /* 버튼 글꼴 크기 약간 줄임 */
     font-weight: bold;
-}
-.stButton>button:hover {
+}}
+.stButton>button:hover {{
     background-color: #45a049;
-}
+}}
 
 /* 라디오 버튼 및 체크박스 텍스트 중앙 정렬 */
-div.stRadio > label {
+div.stRadio > label {{
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 3px 0; /* 라디오 버튼 간격 조절 */
     font-size: 0.9rem; /* 라디오 버튼 텍스트 크기 */
-}
+}}
 
-div.stCheckbox > label {
+div.stCheckbox > label {{
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 3px 0;
     font-size: 0.9rem; /* 체크박스 텍스트 크기 */
-}
+}}
 
 /* 텍스트 입력창 높이 조절 */
-.stTextInput > div > div > input {
+.stTextInput > div > div > input {{
     height: 40px; /* 높이 조절 */
     border-radius: 8px;
     border: 1px solid #ccc;
     background-color: #2e2e2e; /* 입력창 배경색 */
     color: white; /* 입력창 텍스트색 */
-}
+}}
 
 /* Selectbox 스타일 조정 및 중앙 정렬 (내부 요소 조절) */
-div[data-baseweb="select"] {
+div[data-baseweb="select"] {{
     background-color: #2e2e2e; /* 셀렉트박스 배경색 */
     color: #ffffff;
     border-radius: 8px;
@@ -206,15 +206,15 @@ div[data-baseweb="select"] {
     margin-left: auto;
     margin-right: auto;
     display: block; /* 중앙 정렬을 위해 블록 요소로 */
-}
-div[data-baseweb="select"] * {
+}}
+div[data-baseweb="select"] * {{
     color: #ffffff; /* 셀렉트박스 내부 텍스트 색상 */
     fill: #ffffff; /* 아이콘 색상 */
     font-size: 0.9rem; /* 셀렉트박스 텍스트 크기 */
-}
+}}
 
 /* 데이터프레임 높이 조절 (랭킹표) */
-.stDataFrame {
+.stDataFrame {{
     max-height: 150px; /* 랭킹표 높이 제한 더 줄임 */
     overflow-y: auto;
     margin-left: auto;
@@ -223,16 +223,16 @@ div[data-baseweb="select"] * {
     border: 1px solid #444;
     border-radius: 8px;
     background-color: #2e2e2e;
-}
-.stDataFrame table th {
+}}
+.stDataFrame table th {{
     background-color: #3e3e3e !important;
     color: white !important;
     font-size: 0.85rem;
-}
-.stDataFrame table td {
+}}
+.stDataFrame table td {{
     color: white !important;
     font-size: 0.85rem;
-}
+}}
 
 </style>
 """, unsafe_allow_html=True)
@@ -805,4 +805,51 @@ elif st.session_state.step == 10:
         st.rerun()
 
 # ---
-## Step 11: 최종 평가 및 엔
+## Step 11: 최종 평가 및 엔딩 분기 (이전 Step 10)
+elif st.session_state.step == 11:
+    final_score = st.session_state.score
+    company_name = st.session_state.company_name
+    final_message = ""
+    title_bubble = ""
+    image_url = ""
+
+    # 최종 점수에 따라 배경 이미지 변경
+    if final_score >= 60:
+        title_bubble = "글로벌 유니콘 기업 달성!"
+        final_message = f"축하합니다, **{company_name}**는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
+        st.session_state.background_image_url = "https://images.unsplash.com/photo-1522204523234-8729aa6d3fd6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 성공 배경
+    elif final_score >= 40:
+        title_bubble = "안정적 성장!"
+        final_message = f"잘하셨습니다, **{company_name}**는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
+        st.session_state.background_image_url = "https://images.unsplash.com/photo-1522204523234-8729aa6d3fd6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 성공 배경
+    elif final_score >= 20:
+        title_bubble = "재정비의 기회!"
+        final_message = f"아쉽게도, **{company_name}**는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
+        st.session_state.background_image_url = "https://images.unsplash.com/photo-1549925203-b09e235a907b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 위험 배경
+    else:
+        title_bubble = "혹독한 실패..."
+        final_message = f"**{company_name}**는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
+        st.session_state.background_image_url = "https://images.unsplash.com/photo-1627889759328-ee18d7f457ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 위험 배경 2
+
+    # 배경 이미지 URL 변경 후 재실행하여 CSS가 업데이트 되도록 함
+    st.rerun() # CSS 업데이트를 위해 즉시 재실행
+
+    show_speech(title_bubble, final_message, image_url)
+    st.markdown("### Step 11: 최종 평가")
+    st.success(f"당신의 최종 점수: **{final_score}점**")
+    st.markdown(f"**{final_message}**")
+
+    st.write("---")
+    st.markdown("#### 🏆 전체 플레이어 순위")
+    # 점수 저장
+    save_to_ranking(company_name, final_score)
+    # 순위 표시
+    show_full_rankings()
+
+    if st.button("다시 시작하기", key="restart_game"): # key 추가
+        st.session_state.reset_game = True
+        st.rerun()
