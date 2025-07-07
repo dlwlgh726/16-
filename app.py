@@ -88,17 +88,7 @@ h1, h2, h3, h4, h5, h6, label, p, span, div { color: inherit; }
 div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
 div[data-baseweb="select"] * { color: #000000; fill: #000000; }
 button p { color: #000000; font-weight: bold; }
-
-/* ✅ 수정: height와 overflow 제거 */
-.container {
-    position: relative;
-    width: 100%;
-    /* height: 100vh; */ /* 제거 */
-    /* overflow: hidden; */ /* 제거 */
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-}
+.container { position: relative; width: 100%; height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #1a1a1a; }
 
 /* 기본 배경 이미지 스타일 (전체 화면) */
 .bg-image {
@@ -124,8 +114,7 @@ button p { color: #000000; font-weight: bold; }
 }
 
 .speech-bubble {
-    /* ✅ 수정: bottom 값을 줄여서 위로 올림 */
-    position: absolute; bottom: 2vh; left: 50%; transform: translateX(-50%); /* 8vh -> 2vh 로 수정 */
+    position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
     width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
     padding: 20px 25px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     text-align: center; z-index: 1; backdrop-filter: blur(8px);
