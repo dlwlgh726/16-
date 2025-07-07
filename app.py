@@ -136,10 +136,16 @@ h4 {
     font-size: 0.9rem; /* 입력 필드 텍스트 크기 */
 }
 
-/* 선택지 글자 흰색으로 강제 설정 */
-label, .stRadio label, .stMarkdown {
+/* 선택지 글자 흰색으로 강제 설정 (더 구체적인 선택자 추가) */
+label,
+.stRadio label,
+.stRadio > label > div > p, /* 라디오 버튼 내부의 p 태그 텍스트 */
+div[data-testid="stRadio"] label, /* st.radio 컨테이너 안의 label */
+div[data-testid="stRadio"] p, /* st.radio 컨테이너 안의 p 태그 */
+.stMarkdown {
     color: white !important;
 }
+
 
 /* Streamlit 버튼 스타일 조정 및 중앙 정렬 */
 .stButton>button {
@@ -273,7 +279,6 @@ def show_speech(title, sub, image_url):
         <div style="margin-top: 3px; font-size: 0.8rem; color: #f0f0f0;">{sub}</div>
     </div>
     """, unsafe_allow_html=True)
-
 
 # ---
 ## Step 0: 시작 안내
