@@ -412,81 +412,130 @@ elif st.session_state.step == 7:
             st.rerun()
 
 # ---
-## Step 8: 돌발 변수 등장 (이전 Step 7)
-elif st.session_state.step == 8:
-    if not st.session_state.random_events_data:
-        st.session_state.random_events_data = {
-            "📉 글로벌 경제 불황": {
-                "options": ["비용 절감", "내수 시장 집중", "긴축 재정 운영", "신사업 보류", "시장 철수"],
-                "best": "내수 시장 집중"
-            },
-            "🚀 경쟁사의 혁신 제품 발표": {
-                "options": ["기술 개발 가속", "브랜드 리뉴얼", "마케팅 강화", "가격 인하", "특허 소송"],
-                "best": "기술 개발 가속"
-            },
-            "📜 정부 규제 강화": {
-                "options": ["법무팀 확대", "규제 준수 시스템 강화", "비즈니스 모델 전환", "로비 활동 강화", "해외 진출 모색"],
-                "best": "규제 준수 시스템 강화"
+elif st.session_state.step == 9:
+    # 업종별 적합 전략 정의 (기존과 동일)
+    growth_strategies = {
+        "💻 IT 스타트업": {
+            "options": ["광고 집중 (온라인/SNS)", "글로벌 시장 진출 (초기)", "유사 기업 M&A", "가격 인하 (시장 점유율 확대)", "프리미엄 서비스 전략"],
+            "best": {
+                "광고 집중 (온라인/SNS)": 8,
+                "글로벌 시장 진출 (초기)": 10,
+                "유사 기업 M&A": 7,
+                "가격 인하 (시장 점유율 확대)": 5,
+                "프리미엄 서비스 전략": 6
+            }
+        },
+        "🌱 친환경 제품": {
+            "options": ["광고 집중 (환경 캠페인)", "친환경 기술 특허 확보", "대기업과 전략적 제휴", "제품 라인업 확장", "ESG 경영 강화"],
+            "best": {
+                "광고 집중 (환경 캠페인)": 7,
+                "친환경 기술 특허 확보": 10,
+                "대기업과 전략적 제휴": 8,
+                "제품 라인업 확장": 6,
+                "ESG 경영 강화": 9
+            }
+        },
+        "🎮 게임 개발사": {
+            "options": ["글로벌 퍼블리싱 계약", "신규 게임 장르 개발", "기존 게임 대규모 업데이트", "e스포츠 리그 개최", "유저 커뮤니티 활성화"],
+            "best": {
+                "글로벌 퍼블리싱 계약": 10,
+                "신규 게임 장르 개발": 8,
+                "기존 게임 대규모 업데이트": 7,
+                "e스포츠 리그 개최": 6,
+                "유저 커뮤니티 활성화": 5
+            }
+        },
+        "👗 패션 브랜드": {
+            "options": ["해외 유명 디자이너 협업", "온라인 스토어 글로벌 확장", "지속 가능한 소재 도입", "고급 라인 런칭", "가성비 중심 대중화 전략"],
+            "best": {
+                "해외 유명 디자이너 협업": 8,
+                "온라인 스토어 글로벌 확장": 10,
+                "지속 가능한 소재 도입": 7,
+                "고급 라인 런칭": 9,
+                "가성비 중심 대중화 전략": 5
+            }
+        },
+        "🍔 푸드테크": {
+            "options": ["신규 시장 (배달/케이터링) 확장", "R&D 투자 (대체육 등)", "물류 시스템 혁신", "프랜차이즈 확대", "건강식/맞춤형 푸드 서비스"],
+            "best": {
+                "신규 시장 (배달/케이터링) 확장": 8,
+                "R&D 투자 (대체육 등)": 10,
+                "물류 시스템 혁신": 7,
+                "프랜차이즈 확대": 6,
+                "건강식/맞춤형 푸드 서비스": 9
+            }
+        },
+        "🛒 글로벌 전자상거래": {
+            "options": ["신규 국가 진출", "물류 인프라 강화", "AI 기반 추천 시스템 도입", "파트너십 확장", "초개인화 쇼핑 경험 제공"],
+            "best": {
+                "신규 국가 진출": 10,
+                "물류 인프라 강화": 8,
+                "AI 기반 추천 시스템 도입": 9,
+                "파트너십 확장": 7,
+                "초개인화 쇼핑 경험 제공": 8
             }
         }
+    }
 
-    if st.session_state.step8_state == "pending":
-        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
-        st.markdown("### Step 8: 돌발 변수 등장")
+    current_industry = st.session_state.industry
+    current_growth_data = growth_strategies.get(current_industry, {"options": [], "best": {}}) # 이름을 current_growth_options에서 current_growth_data로 변경하여 혼동 방지
 
-        if st.session_state.current_event_name is None:
-            event_name, event_info = random.choice(list(st.session_state.random_events_data.items()))
-            st.session_state.current_event_name = event_name
-            st.session_state.current_event_options = event_info["options"]
-            st.session_state.current_event_best_strategy = event_info["best"]
+    if st.session_state.step9_state == "pending":
+        show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
-        st.markdown(f"**🌀 이벤트:** {st.session_state.current_event_name}")
-        selected_event_strategy = st.radio("✅ 어떤 전략으로 대응할까요?", st.session_state.current_event_options)
+        st.markdown("### Step 9: 마케팅 또는 확장 전략 선택")
+        st.markdown(f"📍 **회사 업종:** {current_industry}")
 
-        if st.button("전략 확정"):
-            st.session_state.step8_strategy_selected = selected_event_strategy
+        if not current_growth_data["options"]:
+            st.warning("⚠️ 선택된 업종에 대한 성장 전략 데이터가 없습니다. 게임을 다시 시작해주세요.")
+            if st.button("게임 다시 시작"):
+                st.session_state.reset_game = True
+                st.rerun()
+        else:
+            selected_marketing_strategy = st.radio("📈 어떤 전략으로 회사를 성장시킬까요?", current_growth_data["options"])
 
-            if selected_event_strategy == st.session_state.current_event_best_strategy:
-                st.session_state.score += 10
-                st.session_state.step8_score_earned = 10
-                title_prefix = "이번에도 잘 대처했군."
-            else:
-                st.session_state.score += 5
-                st.session_state.step8_score_earned = 5
-                title_prefix = "나쁘지 않은 대응이었어."
+            if st.button("전략 확정"):
+                st.session_state.step9_strategy_selected = selected_marketing_strategy
+                score_to_add = current_growth_data["best"].get(selected_marketing_strategy, 5) # 기본 5점
+                st.session_state.score += score_to_add
+                st.session_state.step9_score_earned = score_to_add
 
-            st.session_state.selected_strategy_feedback = (
-                f"“{title_prefix}”\n\n"
-                f"{selected_event_strategy} 전략으로 {st.session_state.step8_score_earned}점 획득!"
-            )
+                # 피드백 메시지 생성
+                if score_to_add >= 8:
+                    title_prefix = "현명한 성장 전략이었어!"
+                else:
+                    title_prefix = "성장을 위한 좋은 시도였어."
 
-            st.session_state.step8_state = "done"
-            st.rerun()
+                st.session_state.selected_strategy_feedback = (
+                    f"“{title_prefix}”\n\n"
+                    f"{selected_marketing_strategy} 전략으로 {st.session_state.step9_score_earned}점 획득!"
+                )
+                
+                st.session_state.step9_state = "done"
+                st.rerun()
 
-    elif st.session_state.step8_state == "done":
+    elif st.session_state.step9_state == "done":
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
         title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
         subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
-        subtitle_bubble += f" (총 점수: {st.session_state.score}점)"
+        subtitle_bubble += f" (누적 점수: {st.session_state.score}점)" # 누적 점수를 말풍선 하단에 포함
 
         show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
-        st.markdown("### Step 8: 돌발 변수 결과")
-        st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
-        st.info(f"총 점수: **{st.session_state.score}점**")
+        st.markdown("### Step 9: 마케팅 또는 확장 전략 결과")
+        st.success(f"당신의 전략: **{st.session_state.step9_strategy_selected}**")
+        st.info(f"누적 점수: **{st.session_state.score}점**")
 
-        # Step 8 관련 세션 상태 정리
-        if "step8_score_earned" in st.session_state:
-            del st.session_state.step8_score_earned
-        if "step8_strategy_selected" in st.session_state:
-            del st.session_state.step8_strategy_selected
-        st.session_state.current_event_name = None
-        st.session_state.current_event_options = []
-        st.session_state.current_event_best_strategy = ""
-        st.session_state.selected_strategy_feedback = ""
+        # Step 9 관련 세션 상태 정리
+        # 'step9_score_earned'와 'step9_strategy_selected'는 다음 스텝에서 참조할 필요가 없으므로 여기서 삭제
+        if "step9_score_earned" in st.session_state:
+            del st.session_state.step9_score_earned
+        if "step9_strategy_selected" in st.session_state:
+            del st.session_state.step9_strategy_selected
+        st.session_state.selected_strategy_feedback = "" # 피드백 메시지 초기화
 
         if st.button("다음 이벤트 ▶️"):
-            st.session_state.step = 9 # 다음 스텝으로 이동 (기존 Step 8)
-            st.session_state.step8_state = "pending"
+            st.session_state.step = 10 # 다음 스텝 (리포트)으로 이동
+            st.session_state.step9_state = "pending" # 다음 게임을 위해 상태 초기화
             st.rerun()
 
 # ---
