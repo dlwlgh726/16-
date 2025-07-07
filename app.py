@@ -130,159 +130,156 @@ def show_speech(title, sub, image_url):
 
 # ---
 # ✅ 공통 CSS 스타일 (전체 화면 배경 및 말풍선 UI 고정)
+# 배경 이미지 URL 안전하게 불러오기
+bg_url = st.session_state.get(
+    "background_image_url",
+    "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
+)
+
 st.markdown(f"""
 <style>
-/* 기본 앱 컨테이너 설정 */
+/* 앱 전체 배경 이미지 설정 */
+[data-testid="stApp"] {{
+    background-image: url('{bg_url}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}}
+
+/* 앱 컨테이너 기본 설정 */
 html, body, [data-testid="stApp"] {{
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden; /* 전체 앱 스크롤 방지 */
-    background-image: url('{st.session_state.background_image_url}'); /* 배경 이미지 설정 */
-    background-size: cover; /* 화면에 꽉 채우도록 */
-    background-position: center; /* 이미지 중앙 정렬 */
-    background-repeat: no-repeat; /* 반복 방지 */
-    color: #ffffff; /* 기본 텍스트 색상 */
+    overflow: hidden;
+    background-color: transparent;
+    color: #ffffff;
 }}
 
-/* Streamlit 메인 콘텐츠 컨테이너 설정 */
 .main .block-container {{
-    padding-top: 0.5rem; /* 여백 최소화 */
-    padding-bottom: 0.5rem; /* 여백 최소화 */
-    height: 100vh; /* 전체 뷰포트 높이 사용, 스크롤 방지 */
-    overflow-y: hidden; /* 이 영역 스크롤 아예 막음 */
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    height: 100vh;
+    overflow-y: hidden;
     overflow-x: hidden;
-    display: flex; /* 내부 요소 중앙 정렬을 위해 flexbox 사용 */
-    flex-direction: column; /* 세로 정렬 */
-    justify-content: center; /* 세로 중앙 정렬 */
-    align-items: center; /* 가로 중앙 정렬 */
-    width: 100%; /* 전체 너비 사용 */
-    background-color: rgba(0, 0, 0, 0.3); /* 배경 이미지 위에 약간 어두운 투명 배경 추가 (선택 사항) */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }}
 
-/* 텍스트 중앙 정렬 */
+/* 텍스트 및 요소 스타일 */
 .stMarkdown, .stText, .stAlert, .stSuccess, .stInfo, .stWarning, .stError,
 h1, h2, h3, h4, h5, h6, label, p, .stRadio > label > div, .stCheckbox > label > div,
-div[data-testid^="stMarkdownContainer"]] {{ /* st.markdown으로 생성되는 div도 포함 */
+div[data-testid^="stMarkdownContainer"] {{
     text-align: center !important;
-    width: 100%; /* 중앙 정렬을 위해 너비 100% 확보 */
-    font-size: 0.95rem; /* 글꼴 크기 약간 줄임 */
+    width: 100%;
+    font-size: 0.95rem;
 }}
 
-h3 {{ /* 특정 헤더 크기 조정 */
+h3 {{
     font-size: 1.2rem !important;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }}
+
 h4 {{
     font-size: 1.1rem !important;
     margin-top: 0.4rem;
     margin-bottom: 0.4rem;
 }}
 
-/* 텍스트 입력 필드의 placeholder 텍스트 및 입력된 텍스트 중앙 정렬 */
-.stTextInput > div > div > input::placeholder,
-.stTextInput > div > div > input {{
+/* 입력창 */
+.stTextInput > div > div > input,
+.stTextInput > div > div > input::placeholder {{
     text-align: center !important;
-    font-size: 0.9rem; /* 입력 필드 텍스트 크기 */
+    font-size: 0.9rem;
 }}
 
-/* 선택지 글자 흰색으로 강제 설정 */
-label, .stRadio label, .stMarkdown {{
-    color: white !important;
+.stTextInput > div > div > input {{
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #2e2e2e;
+    color: white;
 }}
 
-/* Streamlit 버튼 스타일 조정 및 중앙 정렬 */
+/* 버튼 */
 .stButton>button {{
-    width: 80%; /* 버튼 너비 조정 */
-    max-width: 300px; /* 최대 너비 설정 */
-    padding: 8px 0; /* 패딩 줄임 */
-    margin-top: 10px; /* 마진 줄임 */
-    display: block; /* 블록 요소로 만들어 margin: auto 적용 가능하게 */
+    width: 80%;
+    max-width: 300px;
+    padding: 8px 0;
+    margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
-    background-color: #4CAF50; /* 버튼 색상 */
-    color: white; /* 버튼 텍스트 색상 */
+    background-color: #4CAF50;
+    color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem; /* 버튼 글꼴 크기 약간 줄임 */
+    font-size: 1rem;
     font-weight: bold;
 }}
+
 .stButton>button:hover {{
     background-color: #45a049;
 }}
 
-/* 라디오 버튼 및 체크박스 텍스트 중앙 정렬 */
-div.stRadio > label {{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 3px 0; /* 라디오 버튼 간격 조절 */
-    font-size: 0.9rem; /* 라디오 버튼 텍스트 크기 */
-}}
-
+/* 라디오/체크박스 */
+div.stRadio > label,
 div.stCheckbox > label {{
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 3px 0;
-    font-size: 0.9rem; /* 체크박스 텍스트 크기 */
+    font-size: 0.9rem;
 }}
 
-/* 텍스트 입력창 높이 조절 */
-.stTextInput > div > div > input {{
-    height: 40px; /* 높이 조절 */
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #2e2e2e; /* 입력창 배경색 */
-    color: white; /* 입력창 텍스트색 */
-}}
-
-/* Selectbox 스타일 조정 및 중앙 정렬 (내부 요소 조절) */
+/* 셀렉트박스 */
 div[data-baseweb="select"] {{
-    background-color: #2e2e2e; /* 셀렉트박스 배경색 */
+    background-color: #2e2e2e;
     color: #ffffff;
     border-radius: 8px;
-    width: 80%; /* 너비 조정 */
-    max-width: 300px; /* 최대 너비 */
+    width: 80%;
+    max-width: 300px;
     margin-left: auto;
     margin-right: auto;
-    display: block; /* 중앙 정렬을 위해 블록 요소로 */
-}}
-div[data-baseweb="select"] * {{
-    color: #ffffff; /* 셀렉트박스 내부 텍스트 색상 */
-    fill: #ffffff; /* 아이콘 색상 */
-    font-size: 0.9rem; /* 셀렉트박스 텍스트 크기 */
+    display: block;
 }}
 
-/* 데이터프레임 높이 조절 (랭킹표) */
+div[data-baseweb="select"] * {{
+    color: #ffffff;
+    fill: #ffffff;
+    font-size: 0.9rem;
+}}
+
+/* 랭킹표 스타일 */
 .stDataFrame {{
-    max-height: 150px; /* 랭킹표 높이 제한 더 줄임 */
+    max-height: 150px;
     overflow-y: auto;
     margin-left: auto;
     margin-right: auto;
-    display: block; /* 중앙 정렬을 위해 블록 요소로 */
+    display: block;
     border: 1px solid #444;
     border-radius: 8px;
     background-color: #2e2e2e;
 }}
+
 .stDataFrame table th {{
     background-color: #3e3e3e !important;
     color: white !important;
     font-size: 0.85rem;
 }}
+
 .stDataFrame table td {{
     color: white !important;
     font-size: 0.85rem;
 }}
-
 </style>
 """, unsafe_allow_html=True)
-
 
 # ---
 # ✅ show_speech 함수 변경
