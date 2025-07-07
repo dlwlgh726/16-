@@ -860,7 +860,7 @@ elif st.session_state.step == 11:
     st.write("---")
     st.markdown("#### 🏆 전체 플레이어 순위")
     # 점수 저장
-    
+    save_to_ranking(company_name, final_score)
     # 순위 표시
     show_full_rankings()
 
