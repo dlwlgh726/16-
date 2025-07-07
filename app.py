@@ -413,91 +413,86 @@ elif st.session_state.step == 7:
 
 # ---
 ## Step 8: 돌발 변수 등장 (이전 Step 7)
-
 elif st.session_state.step == 8:
-    if not st.session_state.random_events_data:
-        st.session_state.random_events_data = {
-            "📉 글로벌 경제 불황": {
-                "options": ["비용 절감", "내수 시장 집중", "긴축 재정 운영", "신사업 보류", "시장 철수"],
-                "best": "내수 시장 집중"
-            },
-            "🚀 경쟁사의 혁신 제품 발표": {
-                "options": ["기술 개발 가속", "브랜드 리뉴얼", "마케팅 강화", "가격 인하", "특허 소송"],
-                "best": "기술 개발 가속"
-            },
+    if not st.session_state.random_events_data:
+        st.session_state.random_events_data = {
+            "📉 글로벌 경제 불황": {
+                "options": ["비용 절감", "내수 시장 집중", "긴축 재정 운영", "신사업 보류", "시장 철수"],
+                "best": "내수 시장 집중"
+            },
+            "🚀 경쟁사의 혁신 제품 발표": {
+                "options": ["기술 개발 가속", "브랜드 리뉴얼", "마케팅 강화", "가격 인하", "특허 소송"],
+                "best": "기술 개발 가속"
+            },
+            "📜 정부 규제 강화": {
+                "options": ["법무팀 확대", "규제 준수 시스템 강화", "비즈니스 모델 전환", "로비 활동 강화", "해외 진출 모색"],
+                "best": "규제 준수 시스템 강화"
+            }
+        }
 
-            "📜 정부 규제 강화": {
-                "options": ["법무팀 확대", "규제 준수 시스템 강화", "비즈니스 모델 전환", "로비 활동 강화", "해외 진출 모색"],
-                "best": "규제 준수 시스템 강화"
-            }
-        }
+    if st.session_state.step8_state == "pending":
+        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("### Step 8: 돌발 변수 등장")
 
-    if st.session_state.step8_state == "pending":
-        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
-        st.markdown("### Step 8: 돌발 변수 등장")
-        if st.session_state.current_event_name is None:
-            event_name, event_info = random.choice(list(st.session_state.random_events_data.items()))
-            st.session_state.current_event_name = event_name
-            st.session_state.current_event_options = event_info["options"]
-            st.session_state.current_event_best_strategy = event_info["best"]
+        if st.session_state.current_event_name is None:
+            event_name, event_info = random.choice(list(st.session_state.random_events_data.items()))
+            st.session_state.current_event_name = event_name
+            st.session_state.current_event_options = event_info["options"]
+            st.session_state.current_event_best_strategy = event_info["best"]
 
-        st.markdown(f"**🌀 이벤트:** {st.session_state.current_event_name}")
-        selected_event_strategy = st.radio("✅ 어떤 전략으로 대응할까요?", st.session_state.current_event_options)
+        st.markdown(f"**🌀 이벤트:** {st.session_state.current_event_name}")
+        selected_event_strategy = st.radio("✅ 어떤 전략으로 대응할까요?", st.session_state.current_event_options)
 
+        if st.button("전략 확정"):
+            st.session_state.step8_strategy_selected = selected_event_strategy
 
-        if st.button("전략 확정"):
-            st.session_state.step8_strategy_selected = selected_event_strategy
+            if selected_event_strategy == st.session_state.current_event_best_strategy:
+                st.session_state.score += 10
+                st.session_state.step8_score_earned = 10
+                title_prefix = "이번에도 잘 대처했군."
+            else:
+                st.session_state.score += 5
+                st.session_state.step8_score_earned = 5
+                title_prefix = "나쁘지 않은 대응이었어."
 
-            if selected_event_strategy == st.session_state.current_event_best_strategy:
-                st.session_state.score += 10
-                st.session_state.step8_score_earned = 10
-                title_prefix = "이번에도 잘 대처했군."
-            else:
-                st.session_state.score += 5
-                st.session_state.step8_score_earned = 5
-                title_prefix = "나쁘지 않은 대응이었어."
+            st.session_state.selected_strategy_feedback = (
+                f"“{title_prefix}”\n\n"
+                f"{selected_event_strategy} 전략으로 {st.session_state.step8_score_earned}점 획득!"
+            )
 
+            st.session_state.step8_state = "done"
+            st.rerun()
 
-            st.session_state.selected_strategy_feedback = (
-                f"“{title_prefix}”\n\n"
-                f"{selected_event_strategy} 전략으로 {st.session_state.step8_score_earned}점 획득!"
-            )
+    elif st.session_state.step8_state == "done":
+        feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
+        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
+        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
+        subtitle_bubble += f" (총 점수: {st.session_state.score}점)"
 
-            st.session_state.step8_state = "done"
-            st.rerun()
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("### Step 8: 돌발 변수 결과")
+        st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
+        st.info(f"총 점수: **{st.session_state.score}점**")
 
-    elif st.session_state.step8_state == "done":
-        feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
-        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
-        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
-        subtitle_bubble += f" (총 점수: {st.session_state.score}점)"
+        # Step 8 관련 세션 상태 정리
+        if "step8_score_earned" in st.session_state:
+            del st.session_state.step8_score_earned
+        if "step8_strategy_selected" in st.session_state:
+            del st.session_state.step8_strategy_selected
+        st.session_state.current_event_name = None
+        st.session_state.current_event_options = []
+        st.session_state.current_event_best_strategy = ""
+        st.session_state.selected_strategy_feedback = ""
 
+        if st.button("다음 이벤트 ▶️"):
+            st.session_state.step = 9 # 다음 스텝으로 이동 (기존 Step 8)
+            st.session_state.step8_state = "pending"
+            st.rerun()
 
-        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
-        st.markdown("### Step 8: 돌발 변수 결과")
-        st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
-        st.info(f"총 점수: **{st.session_state.score}점**")
-
-
-        # Step 8 관련 세션 상태 정리
-        if "step8_score_earned" in st.session_state:
-            del st.session_state.step8_score_earned
-        if "step8_strategy_selected" in st.session_state:
-            del st.session_state.step8_strategy_selected
-        st.session_state.current_event_name = None
-        st.session_state.current_event_options = []
-        st.session_state.current_event_best_strategy = ""
-        st.session_state.selected_strategy_feedback = ""
-
-
-        if st.button("다음 이벤트 ▶️"):
-            st.session_state.step = 9 # 다음 스텝으로 이동 (기존 Step 8)
-            st.session_state.step8_state = "pending"
-            st.rerun()
 # ---
 ## Step 9: 마케팅 또는 확장 전략 선택 (이전 Step 8)
 elif st.session_state.step == 9:
-    # 업종별 적합 전략 정의 (기존과 동일)
+    # 업종별 적합 전략 정의
     growth_strategies = {
         "💻 IT 스타트업": {
             "options": ["광고 집중 (온라인/SNS)", "글로벌 시장 진출 (초기)", "유사 기업 M&A", "가격 인하 (시장 점유율 확대)", "프리미엄 서비스 전략"],
@@ -610,7 +605,6 @@ elif st.session_state.step == 9:
         st.info(f"누적 점수: **{st.session_state.score}점**")
 
         # Step 9 관련 세션 상태 정리
-        # 'step9_score_earned'와 'step9_strategy_selected'는 다음 스텝에서 참조할 필요가 없으므로 여기서 삭제
         if "step9_score_earned" in st.session_state:
             del st.session_state.step9_score_earned
         if "step9_strategy_selected" in st.session_state:
@@ -621,6 +615,7 @@ elif st.session_state.step == 9:
             st.session_state.step = 10 # 다음 스텝 (리포트)으로 이동
             st.session_state.step9_state = "pending" # 다음 게임을 위해 상태 초기화
             st.rerun()
+
 # ---
 ## Step 10: 연도별 리포트 + 사용자 피드백 (이전 Step 9)
 elif st.session_state.step == 10:
