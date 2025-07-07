@@ -123,7 +123,7 @@ button p { color: #000000; font-weight: bold; }
 /* 첫 번째 특정 이미지 (talking ceo.png)를 위한 중앙 정렬 스타일 */
 .bg-image.centered {
     position: absolute;
-    left: 10; /* 0으로 변경 */
+    left: 20; /* 0으로 변경 */
     top: 0; /* 0으로 변경 */
     transform: none; /* transform 제거 */
     width: 100%; /* 너비를 100%로 */
