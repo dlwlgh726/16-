@@ -677,14 +677,15 @@ elif st.session_state.step == 11:
     elif final_score >= 20:
         title_bubble = "“재정비의 기회!”"
         final_message = f"아쉽게도, {company_name}는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
-        image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/sad_ceo.png" # 슬픈 CEO 이미지
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
     else:
         title_bubble = "“혹독한 실패...”"
         final_message = f"{company_name}는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
-        image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/sad_ceo.png" # 슬픈 CEO 이미지
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
 
     show_speech(title_bubble, final_message, image_url)
     st.markdown("### Step 11: 최종 평가")
+    image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png"
     st.success(f"당신의 최종 점수: **{final_score}점**")
     st.markdown(f"**{final_message}**")
 
