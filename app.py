@@ -109,9 +109,7 @@ button p { color: #000000; font-weight: bold; }
     transform: translate(-50%, -50%);
     width: auto; /* 이미지 원본 비율 유지 */
     height: 100vh; /* 높이를 화면에 맞추고 */
-    max-width: 100%; /* 너비가 화면을 넘지 않도록 */
-    object-fit: contain; /* 비율 유지하며 이미지 전체 보이도록 */
-}
+    
 
 .speech-bubble {
     position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
