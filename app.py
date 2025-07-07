@@ -67,17 +67,8 @@ def save_to_ranking(company_name, final_score):
     updated.to_csv(RANK_FILE, index=False)
     st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점")
 
-
-def clear_rankings():
-    """rankings.csv 파일을 삭제하여 순위 기록을 초기화합니다."""
-    if os.path.exists(RANK_FILE):
-        os.remove(RANK_FILE) # 파일 삭제
-        st.success("✅ 순위 기록이 초기화되었습니다.")
-    else:
-        st.info("⚠️ 삭제할 순위 기록 파일이 없습니다.")
-
 def show_full_rankings():
-    """전체 순위 출력 (내림차순 정렬) 및 초기화 버튼 포함"""
+    """전체 순위 출력 (내림차순 정렬)"""
     st.markdown("<h3 style='color: white;'>🏁 전체 플레이어 순위표</h3>", unsafe_allow_html=True)
     if os.path.exists(RANK_FILE):
         df = pd.read_csv(RANK_FILE)
@@ -89,14 +80,6 @@ def show_full_rankings():
             st.info("아직 저장된 기록이 없습니다.")
     else:
         st.info("아직 저장된 기록이 없습니다.")
-
-    # ---
-    # 초기화 버튼 추가
-    st.markdown("<h4 style='color: white;'>🗑️ 순위 기록 초기화</h4>", unsafe_allow_html=True)
-    if st.button("모든 순위 기록 초기화", help="이 버튼을 누르면 저장된 모든 순위 기록이 삭제됩니다."):
-        clear_rankings()
-        st.rerun() # 변경사항을 즉시 반영하기 위해 앱 다시 실행
-
 
 # ---
 # ✅ 공통 CSS 스타일 (한 번만 정의)
@@ -122,12 +105,18 @@ h1, h2, h3, h4, h5, h6 {
 /* Selectbox 드롭다운 메뉴 텍스트 */
 div[data-baseweb="select"] {
     background-color: #ffffff;
-    color: #ffffff;
 }
 div[data-baseweb="select"] * {
     color: #000000;
     fill: #000000;
 }
+div[data-baseweb="select"] div[role="listbox"] { /* 드롭다운 목록 아이템 */
+    background-color: #ffffff !important;
+}
+div[data-baseweb="select"] div[role="listbox"] div { /* 드롭다운 목록 아이템 텍스트 */
+    color: #000000 !important;
+}
+
 
 /* Button 텍스트 */
 button p {
@@ -151,8 +140,9 @@ button p {
 }
 /* 각 라디오 버튼 선택지의 텍스트 (예: "환 헤지 강화") */
 .stRadio div[role="radiogroup"] label span {
-    color: white !important;
+    color: white !important; /* 모든 라디오 버튼 선택지 텍스트를 흰색으로 */
 }
+
 
 /* Checkbox의 라벨 텍스트 */
 .stCheckbox label span {
@@ -175,24 +165,83 @@ button p {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    object-fit: cover;
+    height: 100%; /* 이미지 높이를 컨테이너에 꽉 채움 */
+    object-fit: cover; /* 이미지가 컨테이너를 꽉 채우도록 하면서 비율 유지 */
     z-index: 0;
 }
 
+/* 말풍선 위치 조정 (화면 중앙 고정) */
 .speech-bubble {
-    position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
-    width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
-    padding: 20px 25px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-align: center; z-index: 1; backdrop-filter: blur(8px);
+    position: fixed; /* absolute 대신 fixed로 변경하여 스크롤 시에도 고정 */
+    top: 50%; /* 화면 세로 중앙 */
+    left: 50%; /* 화면 가로 중앙 */
+    transform: translate(-50%, -50%); /* 정확히 중앙 정렬 */
+    width: 90%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    z-index: 1;
+    backdrop-filter: blur(8px);
+    color: #ffffff; /* 말풍선 내부 텍스트 색상 */
 }
 .speech-title { font-size: 1.4rem; font-weight: bold; color: #ffffff; }
 .speech-sub { margin-top: 10px; font-size: 1rem; color: #f0f0f0; }
+
+
+/* st.success, st.info 배경색 및 텍스트 색상 변경 */
+.stSuccess > div {
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #4CAF50 !important; /* 원래 성공색 유지 */
+}
+.stInfo > div {
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #2196F3 !important; /* 원래 정보색 유지 */
+}
+.stWarning > div { /* 혹시 모를 경고 메시지도 대비 */
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #ff9800 !important;
+}
+.stError > div { /* 혹시 모를 에러 메시지도 대비 */
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #f44336 !important;
+}
+
 
 /* 수평선 색상 */
 hr {
     border: 1px solid white;
 }
+
+/* Streamlit 메인 콘텐츠 컨테이너 패딩 조정 (선택 사항) */
+.main .block-container {
+    padding-top: 1rem; /* 상단 패딩 줄여서 콘텐츠 시작 위치 조정 */
+    padding-right: 1rem;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* Streamlit 위젯 그룹의 상단 마진 줄이기 */
+div[data-testid="stVerticalBlock"] > div:first-child {
+    margin-top: 0rem !important;
+}
+
+/* Streamlit 기본 텍스트도 흰색으로 확실히 */
+[data-testid="stText"] {
+    color: white !important;
+}
+
+/* 제목 아래 간격 조절 */
+h3 + p {
+    margin-top: -10px; /* 제목 바로 아래 단락의 상단 마진 줄이기 */
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -211,19 +260,20 @@ def show_speech(title: str, subtitle: str, image_url: str):
     </div>
     """, unsafe_allow_html=True)
 
-
 # ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
+    # 말풍선만 표시하고, 아래 콘텐츠는 Streamlit 기본 영역에 표시되도록 분리
     show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+    
+    # 말풍선 뒤에 가려지지 않도록 빈 공간 확보 (말풍선이 fixed이므로)
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
+
     st.markdown("<h3 style='color: white;'>경영 시뮬레이션 게임에 오신 것을 환영합니다!</h3>", unsafe_allow_html=True)
     st.markdown("<p style='color: white;'>이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!</p>", unsafe_allow_html=True)
     if st.button("게임 시작 ▶️"):
         st.session_state.step = 1
         st.rerun()
-
-
-
 
 # ---
 ## Step 1: 업종 선택
@@ -233,6 +283,7 @@ elif st.session_state.step == 1:
     else:
         show_speech(f"“{st.session_state.industry}... 흥미로운 선택이군.”", "다음 단계로 가볼까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
     st.markdown("<h3 style='color: white;'>Step 1: 회사 분야 선택</h3>", unsafe_allow_html=True)
     industries = ["💻 IT 스타트업", "🌱 친환경 제품", "🎮 게임 개발사", "👗 패션 브랜드", "🍔 푸드테크", "🛒 글로벌 전자상거래"]
 
@@ -257,6 +308,7 @@ elif st.session_state.step == 2:
     else:
         show_speech(f"“{st.session_state.company_name}... 멋진 이름이군!”", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
     st.markdown("<h3 style='color: white;'>Step 2: 회사 이름 입력</h3>", unsafe_allow_html=True)
     name_input = st.text_input("당신의 회사 이름은?", max_chars=20)
 
@@ -276,6 +328,7 @@ elif st.session_state.step == 2:
 elif st.session_state.step == 3:
     show_speech("“예기치 못한 사건 발생!”", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
 
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
     situations = {
         "⚠️ 대규모 고객 데이터 유출 발생": ["보안 시스템 전면 재구축", "PR 대응", "사과문 발표", "외부 컨설턴트 투입", "서비스 일시 중단"],
         "📈 갑작스러운 수요 폭증": ["생산 라인 확장", "기술 투자", "임시 고용 확대", "외주 활용", "품질 단가 조정"],
@@ -301,7 +354,6 @@ elif st.session_state.step == 3:
 
     st.markdown("<h3 style='color: white;'>Step 3: 전략 선택</h3>", unsafe_allow_html=True)
     st.markdown(f"<p style='color: white;'>📍 <b>상황:</b> {st.session_state.situation}</p>", unsafe_allow_html=True)
-    # 🧠 당신의 전략은? 이 부분을 st.markdown으로 먼저 출력하고 st.radio의 label은 빈 문자열로 둠
     st.markdown("<span style='color: white;'>🧠 당신의 전략은?</span>", unsafe_allow_html=True)
     strategy = st.radio("", st.session_state.options, key="step3_strategy_radio") # key 추가
 
@@ -334,6 +386,7 @@ elif st.session_state.step == 4:
         subtitle = st.session_state.selected_strategy_feedback
 
     show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
 
     st.markdown("<h3 style='color: white;'>Step 4: 결과 분석</h3>", unsafe_allow_html=True)
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
@@ -357,6 +410,7 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     show_speech("“국가적 위기 발생!”", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
     crisis_situations = {
         "📉 한국 외환시장 급변 (원화 가치 급락)": ["환 헤지 강화", "수출 확대", "정부와 협력", "외환 보유 확대", "위기 커뮤니케이션"],
         "🇺🇸 미 연준의 기준금리 인상": ["대출 축소", "내수 집중 전략", "고금리 대비 자산 조정", "비용 구조 개선", "긴축 경영"],
@@ -380,7 +434,6 @@ elif st.session_state.step == 5:
 
     st.markdown("<h3 style='color: white;'>Step 5: 국가적 위기 대응</h3>", unsafe_allow_html=True)
     st.markdown(f"<p style='color: white;'><b>상황:</b> {st.session_state.crisis_situation}</p>", unsafe_allow_html=True)
-    # 이 부분을 수정: st.radio 라벨 인자를 직접 HTML로 넘기는 방식 대신 st.markdown을 사용
     st.markdown("<span style='color: white;'>🧠 대응 전략을 선택하세요:</span>", unsafe_allow_html=True)
     crisis_strategy = st.radio("", st.session_state.crisis_options, key="crisis_radio")
 
@@ -413,6 +466,7 @@ elif st.session_state.step == 6:
         subtitle = st.session_state.selected_strategy_feedback + f" 총 점수: {st.session_state.score}점"
 
     show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
     st.markdown("<h3 style='color: white;'>Step 6: 국가적 위기 대응 결과</h3>", unsafe_allow_html=True)
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
     st.info(f"현재 점수: **{st.session_state.score}점**")
@@ -440,6 +494,7 @@ elif st.session_state.step == 7:
 
     if st.session_state.step7_state == "pending":
         show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
         st.markdown("<h3 style='color: white;'>Step 7: 내부 문제 해결 전략 선택</h3>", unsafe_allow_html=True)
 
         st.markdown("<span style='color: white;'>내부 문제를 해결할 전략을 선택하세요:</span>", unsafe_allow_html=True)
@@ -473,6 +528,7 @@ elif st.session_state.step == 7:
         subtitle_bubble += f" (누적 점수: {st.session_state.score}점)"
 
         show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
 
         st.markdown("<h3 style='color: white;'>Step 7: 내부 문제 해결 결과</h3>", unsafe_allow_html=True)
         st.success(f"당신의 전략: **{st.session_state.step7_strategy_selected}**")
@@ -511,6 +567,7 @@ elif st.session_state.step == 8:
 
     if st.session_state.step8_state == "pending":
         show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
         st.markdown("<h3 style='color: white;'>Step 8: 돌발 변수 등장</h3>", unsafe_allow_html=True)
 
         if st.session_state.current_event_name is None:
@@ -550,6 +607,7 @@ elif st.session_state.step == 8:
         subtitle_bubble += f" (총 점수: {st.session_state.score}점)"
 
         show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
         st.markdown("<h3 style='color: white;'>Step 8: 돌발 변수 결과</h3>", unsafe_allow_html=True)
         st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
         st.info(f"총 점수: **{st.session_state.score}점**")
@@ -642,6 +700,7 @@ elif st.session_state.step == 9:
     if st.session_state.step9_state == "pending":
         show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
+        st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
         st.markdown("<h3 style='color: white;'>Step 9: 마케팅 또는 확장 전략 선택</h3>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: white;'>📍 <b>회사 업종:</b> {current_industry}</p>", unsafe_allow_html=True)
 
@@ -681,6 +740,7 @@ elif st.session_state.step == 9:
         subtitle_bubble += f" (누적 점수: {st.session_state.score}점)" # 누적 점수를 말풍선 하단에 포함
 
         show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
         st.markdown("<h3 style='color: white;'>Step 9: 마케팅 또는 확장 전략 결과</h3>", unsafe_allow_html=True)
         st.success(f"당신의 전략: **{st.session_state.step9_strategy_selected}**")
         st.info(f"누적 점수: **{st.session_state.score}점**")
@@ -712,6 +772,7 @@ elif st.session_state.step == 10:
     report_title = f"“{company_name}의 3년간 경영 리포트”"
     report_subtitle = "당신의 선택이 회사를 이렇게 변화시켰습니다."
     show_speech(report_title, report_subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
 
     st.markdown(f"<h3 style='color: white;'>Step 10: {company_name}의 3년간 리포트</h3>", unsafe_allow_html=True)
     st.write(f"<p style='color: white;'>CEO <b>{company_name}</b>님, 지난 3년간 당신의 경영 활동을 분석한 결과입니다.</p>", unsafe_allow_html=True)
@@ -765,6 +826,7 @@ elif st.session_state.step == 11:
         image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/sad_ceo.png" # 슬픈 CEO 이미지
 
     show_speech(title_bubble, final_message, image_url)
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
     st.markdown("<h3 style='color: white;'>Step 11: 최종 평가</h3>", unsafe_allow_html=True)
     st.success(f"당신의 최종 점수: **{final_score}점**")
     st.markdown(f"<p style='color: white;'><b>{final_message}</b></p>", unsafe_allow_html=True)
@@ -773,9 +835,9 @@ elif st.session_state.step == 11:
     st.markdown("<h4 style='color: white;'>🏆 전체 플레이어 순위</h4>", unsafe_allow_html=True)
     # 점수 저장
     save_to_ranking(company_name, final_score)
-    # 순위 표시
     show_full_rankings()
 
+    st.write("<hr style='border: 1px solid white;'>", unsafe_allow_html=True)
     if st.button("다시 시작하기"):
         st.session_state.reset_game = True
         st.rerun()
