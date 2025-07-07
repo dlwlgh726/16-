@@ -430,6 +430,7 @@ elif st.session_state.step == 7:
             st.rerun()
 
 # ---
+# ---
 ## Step 8: 마케팅 또는 확장 전략 선택 (새로운 스텝)
 elif st.session_state.step == 8:
     show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
@@ -533,8 +534,8 @@ elif st.session_state.step == 8:
 
     elif st.session_state.step8_state == "done":
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
-        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
-        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
+        title_bubble = feedback_parts [0] if len(feedback_parts) > 0 else "결과"
+        subtitle_bubble = feedback_parts [1] if len(feedback_parts) > 1 else ""
         subtitle_bubble += f" (누적 점수: {st.session_state.score}점)"
 
         show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
