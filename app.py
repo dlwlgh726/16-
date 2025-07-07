@@ -34,20 +34,20 @@ def initialize_session_state():
         "random_events_data": {},
         "step3_score_earned": 0,
         "step5_score_earned": 0,
-        "step7_score_earned": 0,  # 기존 Step 6 (내부 문제 해결)
-        "step8_score_earned": 0,  # 기존 Step 7 (돌발 변수)
-        "step9_score_earned": 0,  # 기존 Step 8 (마케팅/확장)
+        "step7_score_earned": 0,
+        "step8_score_earned": 0,
+        "step9_score_earned": 0,
         "step3_strategy_selected": "",
         "step5_strategy_selected": "",
-        "step7_strategy_selected": "",  # 기존 Step 6
-        "step8_strategy_selected": "",  # 기존 Step 7
-        "step9_strategy_selected": "",  # 기존 Step 8
+        "step7_strategy_selected": "",
+        "step8_strategy_selected": "",
+        "step9_strategy_selected": "",
         "current_event_name": None,
         "current_event_options": [],
         "current_event_best_strategy": "",
-        "step7_state": "pending",  # Step 7 (내부 문제 해결) 진행 상태 관리
-        "step8_state": "pending",  # Step 8 (돌발 변수) 진행 상태 관리
-        "step9_state": "pending",  # Step 9 (마케팅/확장) 진행 상태 관리
+        "step7_state": "pending",
+        "step8_state": "pending",
+        "step9_state": "pending",
     }
 
     if st.session_state.get("reset_game", False):
@@ -179,6 +179,22 @@ button p { color: #000000; font-weight: bold; }
 div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
 div[data-baseweb="select"] * { color: #000000; fill: #000000; }
 
+/* ⬇️ 모든 텍스트 중앙 정렬 */
+.stMarkdown, .stText, .stAlert, .stSuccess, .stInfo, .stWarning, .stError,
+h1, h2, h3, h4, h5, h6, label, p, .stRadio > label > div, .stCheckbox > label > div {
+    text-align: center !important;
+}
+
+/* 텍스트 입력 필드의 placeholder 텍스트 중앙 정렬 */
+.stTextInput > div > div > input::placeholder {
+    text-align: center !important;
+}
+
+/* 텍스트 입력 필드에 입력된 텍스트 중앙 정렬 */
+.stTextInput > div > div > input {
+    text-align: center !important;
+}
+
 /* ⬇️ 선택지 글자 흰색으로 강제 설정 */
 label, .stRadio label, .stMarkdown {
     color: white !important;
@@ -189,12 +205,31 @@ label, .stRadio label, .stMarkdown {
     width: 100%;
     padding: 8px 0; /* 패딩 줄이기 */
     margin-top: 10px; /* 마진 줄이기 */
+    display: block; /* 블록 요소로 만들어 margin: auto 적용 가능하게 */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* 라디오 버튼 간격 조절 */
 div.stRadio > label {
     margin-bottom: 0.2rem;
 }
+
+/* 라디오 버튼 및 체크박스 텍스트 중앙 정렬을 위해 플렉스 박스 사용 */
+div.stRadio > label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+div.stCheckbox > label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
 
 /* 텍스트 입력창 높이 조절 */
 .stTextInput > div > div > input {
@@ -205,6 +240,9 @@ div.stRadio > label {
 .stDataFrame {
     max-height: 200px; /* 랭킹표 높이 제한 */
     overflow-y: auto;
+    margin-left: auto;
+    margin-right: auto;
+    display: block; /* 중앙 정렬을 위해 블록 요소로 */
 }
 
 /* 컬럼 간격 조절 (필요 시) */
@@ -238,7 +276,24 @@ elif st.session_state.step == 1:
     industries = ["💻 IT 스타트업", "🌱 친환경 제품", "🎮 게임 개발사", "👗 패션 브랜드", "🍔 푸드테크", "🛒 글로벌 전자상거래"]
 
     if not st.session_state.industry_confirmed:
-        selected = st.selectbox("회사 업종을 선택해주세요", industries)
+        # Selectbox는 기본적으로 중앙 정렬이 어려우므로, 컨테이너로 감싸고 중앙 정렬 시도
+        with st.container():
+            st.markdown(
+                f"""
+                <style>
+                    .stSelectbox {{
+                        display: flex;
+                        justify-content: center;
+                        text-align: center;
+                    }}
+                    .stSelectbox > div {{
+                        width: fit-content;
+                        min-width: 250px; /* 최소 너비 설정 */
+                    }}
+                </style>
+                """, unsafe_allow_html=True
+            )
+            selected = st.selectbox("회사 업종을 선택해주세요", industries)
         if st.button("업종 확정"):
             st.session_state.industry = selected
             st.session_state.industry_confirmed = True
@@ -259,9 +314,15 @@ elif st.session_state.step == 2:
         show_speech(f"{st.session_state.company_name}... 멋진 이름이군!", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 2: 회사 이름 입력")
-    name_input = st.text_input("당신의 회사 이름은?", max_chars=20, key="company_name_input") # key 추가
+    # 텍스트 입력 위젯 중앙 정렬은 input::placeholder 및 input 자체에 text-align: center를 적용
+    # 위젯 자체를 중앙에 두려면, 부모 컨테이너에 flexbox 또는 margin: auto 적용 필요
+    st.text_input("당신의 회사 이름은?", max_chars=20, key="company_name_input") # key 추가
 
     if st.button("회사 이름 확정"):
+        # st.session_state.company_name = st.session_state.company_name_input.strip()
+        # 이전 코드에서 텍스트 입력창과 세션 상태 변수 이름 불일치 수정
+        # 텍스트 입력창은 'company_name_input' 키로 값을 가져와야 함
+        name_input = st.session_state.company_name_input
         if name_input.strip():
             st.session_state.company_name = name_input.strip()
             st.success("✅ 회사 이름이 등록되었습니다!")
