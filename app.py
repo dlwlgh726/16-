@@ -68,16 +68,35 @@ def save_to_ranking(company_name, final_score):
     st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점")
 
 
+def clear_rankings():
+    """rankings.csv 파일을 삭제하여 순위 기록을 초기화합니다."""
+    if os.path.exists(RANK_FILE):
+        os.remove(RANK_FILE) # 파일 삭제
+        st.success("✅ 순위 기록이 초기화되었습니다.")
+    else:
+        st.info("⚠️ 삭제할 순위 기록 파일이 없습니다.")
+
 def show_full_rankings():
-    """전체 순위 출력 (내림차순 정렬)"""
+    """전체 순위 출력 (내림차순 정렬) 및 초기화 버튼 포함"""
+    st.markdown("### 🏁 전체 플레이어 순위표")
     if os.path.exists(RANK_FILE):
         df = pd.read_csv(RANK_FILE)
-        df_sorted = df.sort_values(by="score", ascending=False).reset_index(drop=True)
-        df_sorted.index = df_sorted.index + 1  # 1부터 시작하는 순위
-        st.markdown("### 🏁 전체 플레이어 순위표")
-        st.dataframe(df_sorted, use_container_width=True)
+        if not df.empty: # 데이터프레임이 비어있지 않은 경우에만 표시
+            df_sorted = df.sort_values(by="score", ascending=False).reset_index(drop=True)
+            df_sorted.index = df_sorted.index + 1  # 1부터 시작하는 순위
+            st.dataframe(df_sorted, use_container_width=True)
+        else:
+            st.info("아직 저장된 기록이 없습니다.")
     else:
         st.info("아직 저장된 기록이 없습니다.")
+
+    # ---
+    # 초기화 버튼 추가
+    st.markdown("#### 🗑️ 순위 기록 초기화")
+    if st.button("모든 순위 기록 초기화", help="이 버튼을 누르면 저장된 모든 순위 기록이 삭제됩니다."):
+        clear_rankings()
+        st.rerun() # 변경사항을 즉시 반영하기 위해 앱 다시 실행
+
 
 # ---
 # ✅ 공통 CSS 스타일 (한 번만 정의)
@@ -104,13 +123,12 @@ button p { color: #000000; font-weight: bold; }
 /* 첫 번째 특정 이미지 (talking ceo.png)를 위한 중앙 정렬 스타일 */
 .bg-image.centered {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: auto; /* 이미지 원본 비율 유지 */
+    left: 0; /* 0으로 변경 */
+    top: 0; /* 0으로 변경 */
+    transform: none; /* transform 제거 */
+    width: 100%; /* 너비를 100%로 */
     height: 100vh; /* 높이를 화면에 맞추고 */
-    max-width: 100%; /* 너비가 화면을 넘지 않도록 */
-    object-fit: contain; /* 비율 유지하며 이미지 전체 보이도록 */
+    object-fit: cover; /* 비율 유지하며 이미지 전체 보이도록 (공백 없이) */
 }
 
 .speech-bubble {
