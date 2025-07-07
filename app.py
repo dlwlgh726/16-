@@ -52,7 +52,7 @@ initialize_session_state()
 
 # ---
 # ✅ 로컬 파일 기반 순위 시스템 함수
-RANK_FILE = "ranking.csv"
+RANK_FILE = "rankings.csv"
 
 def save_to_ranking(company_name, final_score):
     """회사명과 점수를 rankings.csv에 저장"""
