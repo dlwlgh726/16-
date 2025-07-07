@@ -261,16 +261,22 @@ def show_speech(title: str, subtitle: str, image_url: str):
     """, unsafe_allow_html=True)
 
 # ---
-# ---
-# ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+    # ✅ 버튼 포함된 말풍선 UI 직접 구성
+    st.markdown(f"""
+    <div class="container">
+        <img class="bg-image" src="https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png">
+        <div class="speech-bubble">
+            <div class="speech-title">“환영합니다!”</div>
+            <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용 중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
+            <br>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # ✅ 말풍선과 버튼이 한 화면에 모두 나오도록 별도 공간 확보 제거
-    st.markdown("<br><br>", unsafe_allow_html=True)  # 약간의 여백만 추가
-
-    # ✅ 버튼을 별도 컨테이너에 노출시켜 화면 내 자연스럽게 보이도록 조정
+    # ✅ 버튼을 Streamlit으로 만들되, 가시성 확보를 위해 padding으로 위로 올리기
+    st.markdown("<div style='height: 350px;'></div>", unsafe_allow_html=True)  # 말풍선 아래 간격 확보
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if st.button("게임 시작 ▶️", key="start_button", use_container_width=True):
         st.session_state.step = 1
