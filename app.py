@@ -4,9 +4,9 @@ import os
 import random
 import time
 
-# ✅ Session state initialization function
+# ✅ 세션 상태 초기화 함수
 def initialize_session_state():
-    """Initializes or resets the Streamlit session state."""
+    """Streamlit 세션 상태를 초기화하거나 재설정합니다."""
     defaults = {
         "step": 0,
         "industry": "",
@@ -51,11 +51,11 @@ def initialize_session_state():
 initialize_session_state()
 
 # ---
-# ✅ Local file-based ranking system functions
+# ✅ 로컬 파일 기반 순위 시스템 함수
 RANK_FILE = "rankings.csv"
 
 def save_to_ranking(company_name, final_score):
-    """Saves the company name and score to rankings.csv"""
+    """회사명과 점수를 rankings.csv에 저장"""
     new_entry = pd.DataFrame([{"company_name": company_name, "score": final_score}])
 
     if os.path.exists(RANK_FILE):
@@ -65,24 +65,24 @@ def save_to_ranking(company_name, final_score):
         updated = new_entry
 
     updated.to_csv(RANK_FILE, index=False)
-    st.success(f"Score recorded successfully: {company_name}, {final_score} points")
+    st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점")
 
 def show_full_rankings():
-    """Displays the full rankings (sorted in descending order)"""
-    st.markdown("<h3 style='color: white;'>🏁 Full Player Rankings</h3>", unsafe_allow_html=True)
+    """전체 순위 출력 (내림차순 정렬)"""
+    st.markdown("<h3 style='color: white;'>🏁 전체 플레이어 순위표</h3>", unsafe_allow_html=True)
     if os.path.exists(RANK_FILE):
         df = pd.read_csv(RANK_FILE)
-        if not df.empty: # Only display if the dataframe is not empty
+        if not df.empty: # 데이터프레임이 비어있지 않은 경우에만 표시
             df_sorted = df.sort_values(by="score", ascending=False).reset_index(drop=True)
-            df_sorted.index = df_sorted.index + 1  # Start ranking from 1
+            df_sorted.index = df_sorted.index + 1  # 1부터 시작하는 순위
             st.dataframe(df_sorted, use_container_width=True)
         else:
-            st.info("No records saved yet.")
+            st.info("아직 저장된 기록이 없습니다.")
     else:
-        st.info("No records saved yet.")
+        st.info("아직 저장된 기록이 없습니다.")
 
 # ---
-# ✅ Common CSS styles (defined once)
+# ✅ 공통 CSS 스타일 (한 번만 정의)
 st.markdown("""
 <style>
 /* General background and default text color (white for dark mode) */
@@ -197,42 +197,22 @@ if st.session_state.step == 0:
     # The speech bubble content is created with HTML.
     st.markdown("""
     <div class="speech-bubble">
-        <div class="speech-title">“Welcome!”</div>
-        <div class="speech-sub">If you are using dark mode, please switch to light mode before playing the game.</div>
+        <div class="speech-title">“환영합니다!”</div>
+        <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
         <hr style="border-top: 1px solid rgba(255, 255, 255, 0.5); margin: 25px 0;">
-        <h3 style='color: white;'>Welcome to the Business Simulation Game!</h3>
-        <p style='color: white; margin-top: -10px;'>In this game, you will have to make various decisions while starting and growing a company. Try to run your company successfully!</p>
+        <h3 style='color: white;'>경영 시뮬레이션 게임에 오신 것을 환영합니다!</h3>
+        <p style='color: white; margin-top: -10px;'>이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!</p>
     </div>
     """, unsafe_allow_html=True)
 
     # The Streamlit button is placed here, right below the bubble.
-    if st.button("Start Game ▶️", key="start_button"):
+    if st.button("게임 시작 ▶️", key="start_button"):
         st.session_state.step = 1
         st.rerun()
 
     # Close the containers.
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-# The rest of your steps (1, 2, 3, etc.) would go here.
-# For example:
-elif st.session_state.step == 1:
-    st.title("Step 1: Choose Your Industry")
-    st.write("This is where the next part of your game begins.")
-
-# ---
-## Step 0: 시작 안내
-if st.session_state.step == 0:
-    # 말풍선만 표시하고, 아래 콘텐츠는 Streamlit 기본 영역에 표시되도록 분리
-    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
-    
-    # 말풍선 뒤에 가려지지 않도록 빈 공간 확보 (말풍선이 fixed이므로)
-    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
-
-    st.markdown("<h3 style='color: white;'>경영 시뮬레이션 게임에 오신 것을 환영합니다!</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color: white;'>이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!</p>", unsafe_allow_html=True)
-    if st.button("게임 시작 ▶️"):
-        st.session_state.step = 1
-        st.rerun()
 
 # ---
 ## Step 1: 업종 선택
