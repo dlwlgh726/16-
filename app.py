@@ -261,19 +261,50 @@ def show_speech(title: str, subtitle: str, image_url: str):
     """, unsafe_allow_html=True)
 
 # ---
+# ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    # 말풍선만 표시하고, 아래 콘텐츠는 Streamlit 기본 영역에 표시되도록 분리
-    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
-    
-    # 말풍선 뒤에 가려지지 않도록 빈 공간 확보 (말풍선이 fixed이므로)
-    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
+    # 버튼 포함된 말풍선 구조로 통합
+    st.markdown(f"""
+    <div class="container">
+        <img class="bg-image" src="https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png">
+        <div class="speech-bubble">
+            <div class="speech-title">“환영합니다!”</div>
+            <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
+            <br>
+            <form action="#">
+                <button style="margin-top: 20px; padding: 10px 20px; font-size: 1rem; font-weight: bold; background-color: white; color: black; border: none; border-radius: 10px;" onclick="window.location.reload();">게임 시작 ▶️</button>
+            </form>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("<h3 style='color: white;'>경영 시뮬레이션 게임에 오신 것을 환영합니다!</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color: white;'>이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!</p>", unsafe_allow_html=True)
-    if st.button("게임 시작 ▶️"):
+    # 버튼 클릭 시 step을 변경하도록 별도 Streamlit 처리
+    if "step0_clicked" not in st.session_state:
+        st.session_state.step0_clicked = False
+
+    if st.session_state.step0_clicked or st.button("게임 시작 ▶️", key="start_hidden", help="숨겨진 버튼 (말풍선 외부 클릭 대비용)", use_container_width=True):
         st.session_state.step = 1
+        st.session_state.step0_clicked = False
         st.rerun()
+
+    # 자바스크립트로 말풍선 내 버튼 누르면 Streamlit 세션에도 반영
+    st.markdown("""
+    <script>
+    const btn = document.querySelector('form button');
+    if (btn) {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            fetch('/_stcore/update_component', {
+                method: 'POST',
+                body: JSON.stringify({type: 'widget', id: 'start_hidden'}),
+                headers: {'Content-Type': 'application/json'}
+            }).then(() => window.dispatchEvent(new Event('click')));
+        }
+    }
+    </script>
+    """, unsafe_allow_html=True)
+
 
 # ---
 ## Step 1: 업종 선택
