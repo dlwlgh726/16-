@@ -278,7 +278,7 @@ if st.session_state.step == 0:
             """, unsafe_allow_html=True)
         # Add some vertical space to make sure the button is not directly on top of the speech bubble
         # This margin-top pushes the button down without using a fixed height div.
-        st.markdown("<div style='margin-top: 60vh;'></div>", unsafe_allow_html=True) # Adjust this value as needed
+        #st.markdown("<div style='margin-top: 60vh;'></div>", unsafe_allow_html=True) # Adjust this value as needed
 
         if st.button("게임 시작 ▶️", use_container_width=True):
             st.session_state.step = 1
