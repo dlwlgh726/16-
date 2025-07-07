@@ -261,7 +261,7 @@ def show_speech(title, sub, image_url):
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* 그림자 약화 */
         text-align: center;
         backdrop-filter: blur(5px); /* 블러 효과 약간 줄임 */
-        margin-top: 80px; /* 이미지 위에 더 많이 겹치도록 음수 마진 사용, 필요에 따라 조절 */
+        margin-top: 110px; /* 이미지 위에 더 많이 겹치도록 음수 마진 사용, 필요에 따라 조절 */
         margin-left: auto;
         margin-right: auto;
         width: 90%;
