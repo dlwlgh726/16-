@@ -669,7 +669,7 @@ elif st.session_state.step == 11:
     if final_score >= 60:
         title_bubble = "“글로벌 유니콘 기업 달성!”"
         final_message = f"축하합니다, {company_name}는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
-        image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png" # 성공 이미지
+        image_url = "applause.png" # 성공 이미지
     elif final_score >= 40:
         title_bubble = "“안정적 성장!”"
         final_message = f"잘하셨습니다, {company_name}는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
