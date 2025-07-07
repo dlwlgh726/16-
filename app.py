@@ -23,20 +23,20 @@ def initialize_session_state():
         "random_events_data": {},
         "step3_score_earned": 0,
         "step5_score_earned": 0,
-        "step7_score_earned": 0,
-        "step8_score_earned": 0,
-        "step9_score_earned": 0,
+        "step7_score_earned": 0,  # 기존 Step 6 (내부 문제 해결)
+        "step8_score_earned": 0,  # 기존 Step 7 (돌발 변수)
+        "step9_score_earned": 0,  # 기존 Step 8 (마케팅/확장)
         "step3_strategy_selected": "",
         "step5_strategy_selected": "",
-        "step7_strategy_selected": "",
-        "step8_strategy_selected": "",
-        "step9_strategy_selected": "",
+        "step7_strategy_selected": "",  # 기존 Step 6
+        "step8_strategy_selected": "",  # 기존 Step 7
+        "step9_strategy_selected": "",  # 기존 Step 8
         "current_event_name": None,
         "current_event_options": [],
         "current_event_best_strategy": "",
-        "step7_state": "pending",
-        "step8_state": "pending",
-        "step9_state": "pending",
+        "step7_state": "pending",  # Step 7 (내부 문제 해결) 진행 상태 관리
+        "step8_state": "pending",  # Step 8 (돌발 변수) 진행 상태 관리
+        "step9_state": "pending",  # Step 9 (마케팅/확장) 진행 상태 관리
     }
 
     if st.session_state.get("reset_game", False):
@@ -85,134 +85,195 @@ def show_full_rankings():
 # ✅ 공통 CSS 스타일 (한 번만 정의)
 st.markdown("""
 <style>
-/* General background and default text color (white for dark mode) */
+/* 전반적인 배경색과 기본 글자색 (다크 모드에 맞춰 흰색) */
 body {
     background-color: #1a1a1a;
-    color: #ffffff; /* Set default text color to white */
+    color: #ffffff; /* 기본 텍스트 색상을 흰색으로 설정 */
 }
 
-.stApp {
-    background-color: #1a1a1a; /* Ensure app background is dark */
-}
-
-/* Set all heading tags to inherit the parent's color */
+/* 모든 헤딩 태그의 색상 기본값으로 설정 (상위 body의 color를 상속) */
 h1, h2, h3, h4, h5, h6 {
-    color: inherit;
+    color: inherit; /* 부모의 색상을 상속받음 */
 }
 
-/* Force text color for Streamlit's internal widgets */
+/* Streamlit 내부 위젯의 텍스트 색상 강제 지정 */
+/* st.markdown, st.write 등으로 생성된 일반 텍스트 */
 .stMarkdown p, .stMarkdown li, .stMarkdown div, .stText {
     color: white !important;
 }
 
-/* Selectbox dropdown menu text */
-div[data-baseweb="select"] { background-color: #ffffff; }
-div[data-baseweb="select"] * { color: #000000; fill: #000000; }
-div[data-baseweb="select"] div[role="listbox"] { background-color: #ffffff !important; }
-div[data-baseweb="select"] div[role="listbox"] div { color: #000000 !important; }
+/* Selectbox 드롭다운 메뉴 텍스트 */
+div[data-baseweb="select"] {
+    background-color: #ffffff;
+}
+div[data-baseweb="select"] * {
+    color: #000000;
+    fill: #000000;
+}
+div[data-baseweb="select"] div[role="listbox"] { /* 드롭다운 목록 아이템 */
+    background-color: #ffffff !important;
+}
+div[data-baseweb="select"] div[role="listbox"] div { /* 드롭다운 목록 아이템 텍스트 */
+    color: #000000 !important;
+}
 
-/* Button text */
-button p { color: #000000; font-weight: bold; }
 
-/* Text input field label and input text */
-.stTextInput label { color: white !important; }
-.stTextInput input { color: black !important; background-color: white !important; }
+/* Button 텍스트 */
+button p {
+    color: #000000;
+    font-weight: bold;
+}
 
-/* Radio button label and option text */
-.stRadio > label { color: white !important; }
-.stRadio div[role="radiogroup"] label span { color: white !important; }
+/* 텍스트 입력 필드의 라벨 및 입력 텍스트 */
+.stTextInput label {
+    color: white !important; /* 라벨 흰색 */
+}
+.stTextInput input {
+    color: black !important; /* 입력 텍스트 검정색 */
+    background-color: white !important; /* 입력 필드 배경 흰색 */
+}
 
-/* Checkbox label text */
-.stCheckbox label span { color: white !important; }
+/* 라디오 버튼의 라벨 및 선택지 텍스트 */
+/* st.radio의 라벨 자체 (예: "대응 전략을 선택하세요:") */
+.stRadio > label {
+    color: white !important;
+}
+/* 각 라디오 버튼 선택지의 텍스트 (예: "환 헤지 강화") */
+.stRadio div[role="radiogroup"] label span {
+    color: white !important; /* 모든 라디오 버튼 선택지 텍스트를 흰색으로 */
+}
 
-/* Speech bubble style for the start screen */
-.speech-bubble-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+
+/* Checkbox의 라벨 텍스트 */
+.stCheckbox label span {
+    color: white !important;
+}
+
+/* 컨테이너 및 이미지 스타일 */
+.container {
+    position: relative;
     width: 100%;
-    height: 100%;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
 }
-.speech-bubble {
-    width: 90%;
-    max-width: 500px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 25px 30px;
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    backdrop-filter: blur(8px);
-    color: #ffffff;
-    margin-bottom: 20px; /* Space between bubble and button */
-}
-.speech-title { font-size: 1.6rem; font-weight: bold; color: #ffffff; }
-.speech-sub { margin-top: 10px; font-size: 1rem; color: #f0f0f0; }
 
-/* Wrapper for the start screen to handle background and centering */
-.start-screen-wrapper {
+.bg-image {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background-image: url('https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 100%; /* 이미지 높이를 컨테이너에 꽉 채움 */
+    object-fit: cover; /* 이미지가 컨테이너를 꽉 채우도록 하면서 비율 유지 */
+    z-index: 0;
 }
 
-/* Success, info, warning, error message boxes */
-.stSuccess > div { background-color: #ffffff !important; color: #000000 !important; border-left: 8px solid #4CAF50 !important; }
-.stInfo > div { background-color: #ffffff !important; color: #000000 !important; border-left: 8px solid #2196F3 !important; }
-.stWarning > div { background-color: #ffffff !important; color: #000000 !important; border-left: 8px solid #ff9800 !important; }
-.stError > div { background-color: #ffffff !important; color: #000000 !important; border-left: 8px solid #f44336 !important; }
+/* 말풍선 위치 조정 (화면 중앙 고정) */
+.speech-bubble {
+    position: fixed; /* absolute 대신 fixed로 변경하여 스크롤 시에도 고정 */
+    top: 50%; /* 화면 세로 중앙 */
+    left: 50%; /* 화면 가로 중앙 */
+    transform: translate(-50%, -50%); /* 정확히 중앙 정렬 */
+    width: 90%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    z-index: 1;
+    backdrop-filter: blur(8px);
+    color: #ffffff; /* 말풍선 내부 텍스트 색상 */
+}
+.speech-title { font-size: 1.4rem; font-weight: bold; color: #ffffff; }
+.speech-sub { margin-top: 10px; font-size: 1rem; color: #f0f0f0; }
 
-/* Horizontal rule color */
-hr { border: 1px solid white; }
 
-/* Adjust Streamlit main container padding */
-.main .block-container { padding: 1rem; }
-div[data-testid="stVerticalBlock"] > div:first-child { margin-top: 0rem !important; }
-[data-testid="stText"] { color: white !important; }
-h3 + p { margin-top: -10px; }
+/* st.success, st.info 배경색 및 텍스트 색상 변경 */
+.stSuccess > div {
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #4CAF50 !important; /* 원래 성공색 유지 */
+}
+.stInfo > div {
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #2196F3 !important; /* 원래 정보색 유지 */
+}
+.stWarning > div { /* 혹시 모를 경고 메시지도 대비 */
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #ff9800 !important;
+}
+.stError > div { /* 혹시 모를 에러 메시지도 대비 */
+    background-color: #ffffff !important; /* 흰색 배경 */
+    color: #000000 !important; /* 검정색 텍스트 */
+    border-left: 8px solid #f44336 !important;
+}
+
+
+/* 수평선 색상 */
+hr {
+    border: 1px solid white;
+}
+
+/* Streamlit 메인 콘텐츠 컨테이너 패딩 조정 (선택 사항) */
+.main .block-container {
+    padding-top: 1rem; /* 상단 패딩 줄여서 콘텐츠 시작 위치 조정 */
+    padding-right: 1rem;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* Streamlit 위젯 그룹의 상단 마진 줄이기 */
+div[data-testid="stVerticalBlock"] > div:first-child {
+    margin-top: 0rem !important;
+}
+
+/* Streamlit 기본 텍스트도 흰색으로 확실히 */
+[data-testid="stText"] {
+    color: white !important;
+}
+
+/* 제목 아래 간격 조절 */
+h3 + p {
+    margin-top: -10px; /* 제목 바로 아래 단락의 상단 마진 줄이기 */
+}
 
 </style>
 """, unsafe_allow_html=True)
 
-# The show_speech function has been removed as it's no longer needed.
-# The start screen UI is now built directly in the Step 0 block.
 
-# ---
-## Step 0: Introduction
-if st.session_state.step == 0:
-    # This wrapper creates the full-screen background and centers the content.
-    st.markdown('<div class="start-screen-wrapper">', unsafe_allow_html=True)
-
-    # This container holds the speech bubble content and the button.
-    st.markdown('<div class="speech-bubble-container">', unsafe_allow_html=True)
-
-    # The speech bubble content is created with HTML.
-    st.markdown("""
-    <div class="speech-bubble">
-        <div class="speech-title">“환영합니다!”</div>
-        <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
-        <hr style="border-top: 1px solid rgba(255, 255, 255, 0.5); margin: 25px 0;">
-        <h3 style='color: white;'>경영 시뮬레이션 게임에 오신 것을 환영합니다!</h3>
-        <p style='color: white; margin-top: -10px;'>이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!</p>
+# ✅ 말풍선 출력 함수
+def show_speech(title: str, subtitle: str, image_url: str):
+    """말풍선과 배경 이미지를 포함한 UI를 렌더링합니다."""
+    image_class = "bg-image"
+    st.markdown(f"""
+    <div class="container">
+        <img class="{image_class}" src="{image_url}">
+        <div class="speech-bubble">
+            <div class="speech-title">{title}</div>
+            <div class="speech-sub">{subtitle}</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # The Streamlit button is placed here, right below the bubble.
-    if st.button("게임 시작 ▶️", key="start_button"):
+# ---
+## Step 0: 시작 안내
+if st.session_state.step == 0:
+    # 말풍선만 표시하고, 아래 콘텐츠는 Streamlit 기본 영역에 표시되도록 분리
+    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+    
+    # 말풍선 뒤에 가려지지 않도록 빈 공간 확보 (말풍선이 fixed이므로)
+    st.markdown("<div style='height: 100vh;'></div>", unsafe_allow_html=True) # 말풍선 높이만큼 빈 공간 추가
+
+    st.markdown("<h3 style='color: white;'>경영 시뮬레이션 게임에 오신 것을 환영합니다!</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='color: white;'>이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!</p>", unsafe_allow_html=True)
+    if st.button("게임 시작 ▶️"):
         st.session_state.step = 1
         st.rerun()
-
-    # Close the containers.
-    st.markdown('</div></div>', unsafe_allow_html=True)
-
 
 # ---
 ## Step 1: 업종 선택
