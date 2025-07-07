@@ -4,206 +4,6 @@ import os
 import random
 import time
 
-# --- CSS 스타일 정의 ---
-custom_css = """
-<style>
-/* Streamlit 앱의 메인 컨테이너에 배경 이미지 적용 */
-/* JavaScript에서 동적으로 설정할 변수를 선언 */
-:root {
-    --bg-image: none;
-}
-
-.stApp {
-    background-image: var(--bg-image);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding-top: 20px;
-    position: relative;
-    overflow-y: auto;
-}
-
-/* ✅ 배경 이미지를 모니터 전체에 꽉 채우도록 */
-.bg-image {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 0;
-}
-
-/* (선택) 중앙 정렬 전용 배경 이미지 */
-.bg-image.centered {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: auto;
-    height: 100vh;
-    max-width: 100%;
-    object-fit: contain;
-}
-
-/* Streamlit 메인 콘텐츠 블록에 투명한 배경과 패딩 추가 */
-.main .block-container {
-    background-color: rgba(0, 0, 0, 0);
-    padding-top: 0rem;
-    padding-right: 1rem;
-    padding-left: 1rem;
-    padding-bottom: 1rem;
-    width: 100%;
-    max-width: 100%;
-}
-
-/* Streamlit 헤더와 푸터 숨기기 */
-header {
-    visibility: hidden;
-    height: 0px !important;
-}
-footer {
-    visibility: hidden;
-    height: 0px !important;
-}
-.st-emotion-cache-cio0dv {
-    visibility: hidden;
-}
-
-/* 말풍선 스타일 */
-.speech-bubble {
-    position: absolute;
-    bottom: 8vh;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 500px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px 25px;
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    z-index: 100;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-.speech-title {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #ffffff;
-}
-.speech-sub {
-    margin-top: 10px;
-    font-size: 1rem;
-    color: #f0f0f0;
-}
-
-/* 위젯 스타일 오버라이드 */
-label {
-    color: #ffffff !important;
-}
-p {
-    color: #ffffff !important;
-}
-
-/* selectbox 스타일 */
-div[data-baseweb="select"] > div {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-    border-radius: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-div[data-baseweb="select"] > div > div > div {
-    color: #ffffff !important;
-}
-div[data-baseweb="popover"] > div > div {
-    background-color: rgba(0, 0, 0, 0.8) !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
-}
-div[data-baseweb="popover"] > div > div * {
-    color: #ffffff !important;
-}
-div[data-baseweb="popover"] li:hover {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* 라디오 버튼 */
-div.stRadio > label {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-    color: #ffffff !important;
-    border-radius: 5px;
-    padding: 5px 10px;
-    margin-bottom: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-div.stRadio > label:hover {
-    background-color: rgba(0, 0, 0, 0.7) !important;
-}
-div.stRadio > label > div > p {
-    color: #ffffff !important;
-}
-div.stRadio > label > div > input:checked + div {
-    background-color: #6c5ce7 !important;
-    border-color: #6c5ce7 !important;
-}
-
-/* 텍스트 입력창 */
-div.stTextInput > div > div {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-    border-radius: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-div.stTextInput input {
-    color: #ffffff !important;
-    background-color: transparent !important;
-}
-
-/* 버튼 스타일 */
-button[data-testid*="stButton"] > div > p {
-    color: #ffffff !important;
-    font-weight: bold;
-}
-button[data-testid*="stButton"] {
-    background-color: #6c5ce7;
-    color: white;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 1.1em;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-}
-button[data-testid*="stButton"]:hover {
-    background-color: #5a4ac3;
-}
-
-/* 에러 메시지 텍스트 */
-.st-emotion-cache-1f06x3d p {
-    color: red !important;
-}
-</style>
-"""
-
-# --- CSS 적용 ---
-st.markdown(custom_css, unsafe_allow_html=True)
-
-# --- 배경 이미지 설정 함수 ---
-def set_background_image(image_url):
-    js_code = f"""
-    <script>
-        document.documentElement.style.setProperty('--bg-image', 'url("{image_url}")');
-    </script>
-    """
-    st.markdown(js_code, unsafe_allow_html=True)
-
-
 # ✅ 세션 상태 초기화 함수
 def initialize_session_state():
     """Streamlit 세션 상태를 초기화하거나 재설정합니다."""
@@ -280,106 +80,89 @@ def show_full_rankings():
         st.info("아직 저장된 기록이 없습니다.")
 
 # ---
-# ✅ 말풍선 출력 함수 (배경 이미지는 set_background_image로 분리)
-def show_speech(title: str, subtitle: str):
-    """말풍선 UI만 렌더링합니다. 배경 이미지는 별도로 set_background_image 함수로 설정됩니다."""
-    st.markdown(f"""
-    <div class="speech-bubble">
-        <div class="speech-title">{title}</div>
-        <div class="speech-sub">{subtitle}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ---
-# --- 게임/스토리 단계 정의 (기존 스토리 유지) ---
-# Step 정보들을 딕셔너리로 미리 정의하여 관리 용이하게
-game_steps_info = {
-    0: {
-        "bg_image": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title": "“환영합니다!”",
-        "speech_subtitle": "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다."
-    },
-    1: {
-        "bg_image": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title_pending": "“좋아, 이제 우리가 어떤 산업에 뛰어들지 결정할 시간이군.”",
-        "speech_subtitle_pending": "어떤 분야에서 승부할지, 네 선택을 보여줘.",
-        "speech_title_confirmed": lambda industry: f"“{industry}... 흥미로운 선택이군.”",
-        "speech_subtitle_confirmed": "다음 단계로 가볼까?"
-    },
-    2: {
-        "bg_image": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title_pending": "“이제 회사를 설립할 시간이야.”",
-        "speech_subtitle_pending": "멋진 회사 이름을 지어보자!",
-        "speech_title_confirmed": lambda name: f"“{name}... 멋진 이름이군!”",
-        "speech_subtitle_confirmed": "이제 다음 단계로 넘어가자."
-    },
-    3: {
-        "bg_image": "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png",
-        "speech_title": "“예기치 못한 사건 발생!”",
-        "speech_subtitle": "상황에 적절한 전략을 선택해 회사를 지켜내자."
-    },
-    4: {
-        "bg_image": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title_good": "“훌륭한 판단이었어!”",
-        "speech_title_bad": "“음... 더 나은 전략도 있었을 거야.”",
-        "speech_subtitle": lambda feedback: feedback # feedback은 selected_strategy_feedback
-    },
-    5: {
-        "bg_image": "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png",
-        "speech_title": "“국가적 위기 발생!”",
-        "speech_subtitle": "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해."
-    },
-    6: {
-        "bg_image": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title_good": "“최고의 경영자군!”",
-        "speech_title_bad": "“괜찮은 성과지만 아직 성장 가능성이 보여.”",
-        "speech_subtitle": lambda feedback, score: f"{feedback} 총 점수: {score}점"
-    },
-    7: {
-        "bg_image_pending": "https://raw.githubusercontent.com/dlwlgh726/16-/main/KakaoTalk_Photo_2025-07-03-16-19-06 005.png",
-        "bg_image_done": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title_pending": "“요즘 직원들 분위기가 심상치 않아...”",
-        "speech_subtitle_pending": "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?",
-        "speech_title_done": lambda prefix: prefix,
-        "speech_subtitle_done": lambda feedback, score: f"{feedback} (누적 점수: {score}점)"
-    },
-    8: {
-        "bg_image_pending": "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png",
-        "bg_image_done": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title_pending": "“뜻밖의 일이 벌어졌어!”",
-        "speech_subtitle_pending": "외부 변수로 인해 경영환경이 크게 흔들리고 있어.",
-        "speech_title_done": lambda prefix: prefix,
-        "speech_subtitle_done": lambda feedback, score: f"{feedback} (총 점수: {score}점)"
-    },
-    9: {
-        "bg_image_pending": "https://raw.githubusercontent.com/dlwlgh726/16-/main/goodevent.png",
-        "bg_image_done": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title_pending": "“제품이 시장에서 인기를 얻기 시작했어!”",
-        "speech_subtitle_pending": "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.",
-        "speech_title_done": lambda prefix: prefix,
-        "speech_subtitle_done": lambda feedback, score: f"{feedback} (누적 점수: {score}점)"
-    },
-    10: {
-        "bg_image": "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png",
-        "speech_title": lambda company_name: f"“{company_name}의 3년간 경영 리포트”",
-        "speech_subtitle": "당신의 선택이 회사를 이렇게 변화시켰습니다."
-    },
-    11: {
-        "bg_image_good": "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png",
-        "bg_image_bad": "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png",
-        "speech_title_unicorn": "“글로벌 유니콘 기업 달성!”",
-        "speech_title_growth": "“안정적 성장!”",
-        "speech_title_reorg": "“재정비의 기회!”",
-        "speech_title_failure": "“혹독한 실패...”",
-        "speech_subtitle": lambda msg: msg
-    }
+# ✅ 공통 CSS 스타일 (전체 화면 배경 및 말풍선 UI 고정)
+st.markdown("""
+<style>
+html, body, [data-testid="stApp"] {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
+.container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+}
 
+.bg-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.bg-image.centered {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: 100vh;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.speech-bubble {
+    position: absolute;
+    bottom: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    z-index: 1;
+    backdrop-filter: blur(8px);
+}
+
+.speech-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.speech-sub {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #f0f0f0;
+}
+
+body { background-color: #1a1a1a; color: #ffffff; }
+h1, h2, h3, h4, h5, h6, label, p, span, div { color: inherit; }
+button p { color: #000000; font-weight: bold; }
+
+div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
+div[data-baseweb="select"] * { color: #000000; fill: #000000; }
+</style>
+""", unsafe_allow_html=True)
+
+# ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    set_background_image(game_steps_info[0]["bg_image"])
-    show_speech(game_steps_info[0]["speech_title"], game_steps_info[0]["speech_subtitle"])
+    show_speech("“환영합니다!”", "게임 플레이에 앞서 다크모드를 적용중이시라면 라이트모드로 전환해주시길 바랍니다.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     st.markdown("### 경영 시뮬레이션 게임에 오신 것을 환영합니다!")
     st.markdown("이 게임에서는 회사를 창업하고 성장시키는 과정에서 다양한 결정을 내려야 합니다. 회사를 성공적으로 운영해보세요!")
     if st.button("게임 시작 ▶️"):
@@ -389,13 +172,10 @@ if st.session_state.step == 0:
 # ---
 ## Step 1: 업종 선택
 elif st.session_state.step == 1:
-    set_background_image(game_steps_info[1]["bg_image"]) # Step 1의 배경 이미지 설정
-
     if not st.session_state.industry_confirmed:
-        show_speech(game_steps_info[1]["speech_title_pending"], game_steps_info[1]["speech_subtitle_pending"])
+        show_speech("“좋아, 이제 우리가 어떤 산업에 뛰어들지 결정할 시간이군.”", "어떤 분야에서 승부할지, 네 선택을 보여줘.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
-        # 이미 확정된 경우, 람다 함수 호출
-        show_speech(game_steps_info[1]["speech_title_confirmed"](st.session_state.industry), game_steps_info[1]["speech_subtitle_confirmed"])
+        show_speech(f"“{st.session_state.industry}... 흥미로운 선택이군.”", "다음 단계로 가볼까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 1: 회사 분야 선택")
     industries = ["💻 IT 스타트업", "🌱 친환경 제품", "🎮 게임 개발사", "👗 패션 브랜드", "🍔 푸드테크", "🛒 글로벌 전자상거래"]
@@ -405,7 +185,7 @@ elif st.session_state.step == 1:
         if st.button("업종 확정"):
             st.session_state.industry = selected
             st.session_state.industry_confirmed = True
-            st.session_state.step = 2 # 다음 스텝으로 바로 이동
+            st.session_state.step = 2
             st.rerun()
     else:
         st.success(f"✅ 선택된 업종: **{st.session_state.industry}**")
@@ -416,12 +196,10 @@ elif st.session_state.step == 1:
 # ---
 ## Step 2: 회사 이름 입력
 elif st.session_state.step == 2:
-    set_background_image(game_steps_info[2]["bg_image"]) # Step 2의 배경 이미지 설정
-
     if not st.session_state.company_name:
-        show_speech(game_steps_info[2]["speech_title_pending"], game_steps_info[2]["speech_subtitle_pending"])
+        show_speech("“이제 회사를 설립할 시간이야.”", "멋진 회사 이름을 지어보자!", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
-        show_speech(game_steps_info[2]["speech_title_confirmed"](st.session_state.company_name), game_steps_info[2]["speech_subtitle_confirmed"])
+        show_speech(f"“{st.session_state.company_name}... 멋진 이름이군!”", "이제 다음 단계로 넘어가자.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 2: 회사 이름 입력")
     name_input = st.text_input("당신의 회사 이름은?", max_chars=20)
@@ -440,8 +218,7 @@ elif st.session_state.step == 2:
 # ---
 ## Step 3: 전략 선택 (예기치 못한 사건)
 elif st.session_state.step == 3:
-    set_background_image(game_steps_info[3]["bg_image"]) # Step 3의 배경 이미지 설정
-    show_speech(game_steps_info[3]["speech_title"], game_steps_info[3]["speech_subtitle"])
+    show_speech("“예기치 못한 사건 발생!”", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
 
     situations = {
         "⚠️ 대규모 고객 데이터 유출 발생": ["보안 시스템 전면 재구축", "PR 대응", "사과문 발표", "외부 컨설턴트 투입", "서비스 일시 중단"],
@@ -488,19 +265,17 @@ elif st.session_state.step == 3:
 # ---
 ## Step 4: 결과 분석 및 피드백 (Step 3에 대한)
 elif st.session_state.step == 4:
-    set_background_image(game_steps_info[4]["bg_image"]) # Step 4의 배경 이미지 설정
-
     score_earned_this_step = st.session_state.get("step3_score_earned", 0)
     selected_strategy_for_feedback = st.session_state.get("step3_strategy_selected", "선택 없음")
 
     if score_earned_this_step == 10:
-        title = game_steps_info[4]["speech_title_good"]
+        title = "“훌륭한 판단이었어!”"
+        subtitle = st.session_state.selected_strategy_feedback
     else:
-        title = game_steps_info[4]["speech_title_bad"]
+        title = "“음... 더 나은 전략도 있었을 거야.”"
+        subtitle = st.session_state.selected_strategy_feedback
 
-    # 람다 함수에 필요한 인자 전달
-    subtitle = game_steps_info[4]["speech_subtitle"](st.session_state.selected_strategy_feedback)
-    show_speech(title, subtitle)
+    show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown("### Step 4: 결과 분석")
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
@@ -522,8 +297,7 @@ elif st.session_state.step == 4:
 # ---
 ## Step 5: 국가적 위기 대응
 elif st.session_state.step == 5:
-    set_background_image(game_steps_info[5]["bg_image"]) # Step 5의 배경 이미지 설정
-    show_speech(game_steps_info[5]["speech_title"], game_steps_info[5]["speech_subtitle"])
+    show_speech("“국가적 위기 발생!”", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
 
     crisis_situations = {
         "📉 한국 외환시장 급변 (원화 가치 급락)": ["환 헤지 강화", "수출 확대", "정부와 협력", "외환 보유 확대", "위기 커뮤니케이션"],
@@ -568,19 +342,17 @@ elif st.session_state.step == 5:
 # ---
 ## Step 6: 중간 평가 (국가적 위기 대응에 대한 피드백)
 elif st.session_state.step == 6:
-    set_background_image(game_steps_info[6]["bg_image"]) # Step 6의 배경 이미지 설정
-
     score_earned_this_step = st.session_state.get("step5_score_earned", 0)
     selected_strategy_for_feedback = st.session_state.get("step5_strategy_selected", "선택 없음")
 
     if score_earned_this_step == 10:
-        title = game_steps_info[6]["speech_title_good"]
+        title = "“최고의 경영자군!”"
+        subtitle = st.session_state.selected_strategy_feedback + f" 총 점수: {st.session_state.score}점"
     else:
-        title = game_steps_info[6]["speech_title_bad"]
+        title = "“괜찮은 성과지만 아직 성장 가능성이 보여.”"
+        subtitle = st.session_state.selected_strategy_feedback + f" 총 점수: {st.session_state.score}점"
 
-    subtitle = game_steps_info[6]["speech_subtitle"](st.session_state.selected_strategy_feedback, st.session_state.score)
-    show_speech(title, subtitle)
-
+    show_speech(title, subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     st.markdown("### Step 6: 국가적 위기 대응 결과")
     st.success(f"당신의 전략: **{selected_strategy_for_feedback}**")
     st.info(f"현재 점수: **{st.session_state.score}점**")
@@ -607,8 +379,7 @@ elif st.session_state.step == 7:
     }
 
     if st.session_state.step7_state == "pending":
-        set_background_image(game_steps_info[7]["bg_image_pending"])
-        show_speech(game_steps_info[7]["speech_title_pending"], game_steps_info[7]["speech_subtitle_pending"])
+        show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dlwlgh726/16-/main/KakaoTalk_Photo_2025-07-03-16-19-06 005.png")
         st.markdown("### Step 7: 내부 문제 해결 전략 선택")
 
         selected_org_strategy = st.radio("내부 문제를 해결할 전략을 선택하세요:", list(org_issues.keys()))
@@ -626,7 +397,7 @@ elif st.session_state.step == 7:
                 title_prefix = "기다리는 건 항상 좋은 선택은 아니지..."
 
             st.session_state.selected_strategy_feedback = (
-                f"{title_prefix}\n\n" # 말풍선 제목으로 사용될 부분
+                f"“{title_prefix}”\n\n"
                 f"{selected_org_strategy} 전략에 따른 점수: {st.session_state.step7_score_earned}점"
             )
 
@@ -634,14 +405,13 @@ elif st.session_state.step == 7:
             st.rerun()
 
     elif st.session_state.step7_state == "done":
-        set_background_image(game_steps_info[7]["bg_image_done"])
-
-        # 피드백 메시지 파싱
+        # 피드백 화면
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
-        title_bubble = game_steps_info[7]["speech_title_done"](feedback_parts[0]) # 첫 번째 라인을 제목으로 사용
-        subtitle_bubble = game_steps_info[7]["speech_subtitle_done"](feedback_parts[1] if len(feedback_parts) > 1 else "", st.session_state.score)
+        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
+        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
+        subtitle_bubble += f" (누적 점수: {st.session_state.score}점)"
 
-        show_speech(title_bubble, subtitle_bubble)
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
         st.markdown("### Step 7: 내부 문제 해결 결과")
         st.success(f"당신의 전략: **{st.session_state.step7_strategy_selected}**")
@@ -679,8 +449,7 @@ elif st.session_state.step == 8:
         }
 
     if st.session_state.step8_state == "pending":
-        set_background_image(game_steps_info[8]["bg_image_pending"])
-        show_speech(game_steps_info[8]["speech_title_pending"], game_steps_info[8]["speech_subtitle_pending"])
+        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
         st.markdown("### Step 8: 돌발 변수 등장")
 
         if st.session_state.current_event_name is None:
@@ -705,7 +474,7 @@ elif st.session_state.step == 8:
                 title_prefix = "나쁘지 않은 대응이었어."
 
             st.session_state.selected_strategy_feedback = (
-                f"{title_prefix}\n\n"
+                f"“{title_prefix}”\n\n"
                 f"{selected_event_strategy} 전략으로 {st.session_state.step8_score_earned}점 획득!"
             )
 
@@ -713,12 +482,12 @@ elif st.session_state.step == 8:
             st.rerun()
 
     elif st.session_state.step8_state == "done":
-        set_background_image(game_steps_info[8]["bg_image_done"])
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
-        title_bubble = game_steps_info[8]["speech_title_done"](feedback_parts[0])
-        subtitle_bubble = game_steps_info[8]["speech_subtitle_done"](feedback_parts[1] if len(feedback_parts) > 1 else "", st.session_state.score)
+        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
+        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
+        subtitle_bubble += f" (총 점수: {st.session_state.score}점)"
 
-        show_speech(title_bubble, subtitle_bubble)
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 8: 돌발 변수 결과")
         st.success(f"전략: **{st.session_state.step8_strategy_selected}**")
         st.info(f"총 점수: **{st.session_state.score}점**")
@@ -809,8 +578,7 @@ elif st.session_state.step == 9:
     current_growth_data = growth_strategies.get(current_industry, {"options": [], "best": {}}) # 이름을 current_growth_options에서 current_growth_data로 변경하여 혼동 방지
 
     if st.session_state.step9_state == "pending":
-        set_background_image(game_steps_info[9]["bg_image_pending"])
-        show_speech(game_steps_info[9]["speech_title_pending"], game_steps_info[9]["speech_subtitle_pending"])
+        show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/goodevent.png")
 
         st.markdown("### Step 9: 마케팅 또는 확장 전략 선택")
         st.markdown(f"📍 **회사 업종:** {current_industry}")
@@ -836,7 +604,7 @@ elif st.session_state.step == 9:
                     title_prefix = "성장을 위한 좋은 시도였어."
 
                 st.session_state.selected_strategy_feedback = (
-                    f"{title_prefix}\n\n"
+                    f"“{title_prefix}”\n\n"
                     f"{selected_marketing_strategy} 전략으로 {st.session_state.step9_score_earned}점 획득!"
                 )
                 
@@ -844,12 +612,12 @@ elif st.session_state.step == 9:
                 st.rerun()
 
     elif st.session_state.step9_state == "done":
-        set_background_image(game_steps_info[9]["bg_image_done"])
         feedback_parts = st.session_state.selected_strategy_feedback.split('\n\n', 1)
-        title_bubble = game_steps_info[9]["speech_title_done"](feedback_parts[0])
-        subtitle_bubble = game_steps_info[9]["speech_subtitle_done"](feedback_parts[1] if len(feedback_parts) > 1 else "", st.session_state.score)
+        title_bubble = feedback_parts[0] if len(feedback_parts) > 0 else "결과"
+        subtitle_bubble = feedback_parts[1] if len(feedback_parts) > 1 else ""
+        subtitle_bubble += f" (누적 점수: {st.session_state.score}점)" # 누적 점수를 말풍선 하단에 포함
 
-        show_speech(title_bubble, subtitle_bubble)
+        show_speech(title_bubble, subtitle_bubble, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
         st.markdown("### Step 9: 마케팅 또는 확장 전략 결과")
         st.success(f"당신의 전략: **{st.session_state.step9_strategy_selected}**")
         st.info(f"누적 점수: **{st.session_state.score}점**")
@@ -869,8 +637,6 @@ elif st.session_state.step == 9:
 # ---
 ## Step 10: 연도별 리포트 + 사용자 피드백 (이전 Step 9)
 elif st.session_state.step == 10:
-    set_background_image(game_steps_info[10]["bg_image"]) # Step 10의 배경 이미지 설정
-
     final_score = st.session_state.score
     company_name = st.session_state.company_name
 
@@ -880,9 +646,9 @@ elif st.session_state.step == 10:
     employee_satisfaction = 70 + (final_score / 10) # 점수에 따라 직원 만족도 변화
     revenue_growth = 10 + (final_score / 10) * 3 # 점수에 따라 매출 증가율 변화
 
-    report_title = game_steps_info[10]["speech_title"](company_name)
-    report_subtitle = game_steps_info[10]["speech_subtitle"]
-    show_speech(report_title, report_subtitle)
+    report_title = f"“{company_name}의 3년간 경영 리포트”"
+    report_subtitle = "당신의 선택이 회사를 이렇게 변화시켰습니다."
+    show_speech(report_title, report_subtitle, "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
 
     st.markdown(f"### Step 10: {company_name}의 3년간 리포트")
     st.write(f"CEO **{company_name}**님, 지난 3년간 당신의 경영 활동을 분석한 결과입니다.")
@@ -919,26 +685,25 @@ elif st.session_state.step == 11:
     image_url = ""
 
     if final_score >= 60:
-        title_bubble = game_steps_info[11]["speech_title_unicorn"]
+        title_bubble = "“글로벌 유니콘 기업 달성!”"
         final_message = f"축하합니다, {company_name}는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
-        image_url = game_steps_info[11]["bg_image_good"] # 성공 이미지
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
     elif final_score >= 40:
-        title_bubble = game_steps_info[11]["speech_title_growth"]
+        title_bubble = "“안정적 성장!”"
         final_message = f"잘하셨습니다, {company_name}는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
-        image_url = game_steps_info[11]["bg_image_good"] # 성공 이미지
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
     elif final_score >= 20:
-        title_bubble = game_steps_info[11]["speech_title_reorg"]
+        title_bubble = "“재정비의 기회!”"
         final_message = f"아쉽게도, {company_name}는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
-        image_url = game_steps_info[11]["bg_image_bad"] # 슬픈 CEO 이미지
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
     else:
-        title_bubble = game_steps_info[11]["speech_title_failure"]
+        title_bubble = "“혹독한 실패...”"
         final_message = f"{company_name}는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
-        image_url = game_steps_info[11]["bg_image_bad"] # 슬픈 CEO 이미지
-    
-    set_background_image(image_url) # 최종 결과에 따라 배경 이미지 설정
-    show_speech(title_bubble, game_steps_info[11]["speech_subtitle"](final_message)) # final_message를 subtitle로 전달
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
 
+    show_speech(title_bubble, final_message, image_url)
     st.markdown("### Step 11: 최종 평가")
+    image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png"
     st.success(f"당신의 최종 점수: **{final_score}점**")
     st.markdown(f"**{final_message}**")
 
