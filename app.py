@@ -7,6 +7,7 @@ import time
 # ---
 # ✅ 세션 상태 초기화 함수
 def initialize_session_state():
+    """Streamlit 세션 상태를 초기화하거나 재설정합니다."""
     defaults = {
         "step": 0,
         "industry": "",
@@ -37,7 +38,6 @@ def initialize_session_state():
         "step7_state": "pending",
         "step8_state": "pending",
         "step9_state": "pending",
-        "background_image_url": "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"  # ✅ 새로 추가된 부분
     }
 
     if st.session_state.get("reset_game", False):
@@ -49,237 +49,187 @@ def initialize_session_state():
         if key not in st.session_state:
             st.session_state[key] = value
 
+initialize_session_state()
+
 # ---
-# ✅ 순위 저장 및 출력 함수
+# ✅ 로컬 파일 기반 순위 시스템 함수
 RANK_FILE = "rankings.csv"
 
 def save_to_ranking(company_name, final_score):
+    """회사명과 점수를 rankings.csv에 저장"""
     new_entry = pd.DataFrame([{"company_name": company_name, "score": final_score}])
+
     if os.path.exists(RANK_FILE):
         existing = pd.read_csv(RANK_FILE)
         updated = pd.concat([existing, new_entry], ignore_index=True)
     else:
         updated = new_entry
+
     updated.to_csv(RANK_FILE, index=False)
+    # st.success(f"점수가 성공적으로 기록되었습니다: {company_name}, {final_score}점") # 최종 단계에서만 표시
 
 def show_full_rankings():
+    """전체 순위 출력 (내림차순 정렬)"""
     if os.path.exists(RANK_FILE):
         df = pd.read_csv(RANK_FILE)
         df_sorted = df.sort_values(by="score", ascending=False).reset_index(drop=True)
-        df_sorted.index = df_sorted.index + 1
+        df_sorted.index = df_sorted.index + 1  # 1부터 시작하는 순위
         st.markdown("### 🏁 전체 플레이어 순위표")
         st.dataframe(df_sorted, use_container_width=True)
     else:
         st.info("아직 저장된 기록이 없습니다.")
 
 # ---
-# ✅ 배경 꽉 채우는 show_speech 함수
-
-def show_speech(title, sub, image_url):
-    st.markdown(f"""
-    <style>
-    .background-container {{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-image: url('{image_url}');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        z-index: -1;
-    }}
-    .speech-bubble {{
-        background: rgba(255, 255, 255, 0.1);
-        padding: 10px 15px;
-        border-radius: 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        backdrop-filter: blur(5px);
-        width: 90%;
-        max-width: 400px;
-        margin: -100px auto 20px auto;
-        position: relative;
-        z-index: 10;
-    }}
-    .speech-title {{
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: #ffffff;
-        margin-bottom: 3px;
-    }}
-    .speech-sub {{
-        font-size: 0.8rem;
-        color: #f0f0f0;
-    }}
-    </style>
-
-    <div class="background-container"></div>
-    <div class="speech-bubble">
-        <div class="speech-title">{title}</div>
-        <div class="speech-sub">{sub}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ---
-# ✅ 그 외 게임 진행 단계 코드는 유지 (Step 0~11 포함)
-# 사용자의 기존 전체 코드를 유지하되 show_speech 함수만 위처럼 수정하면 됩니다.
-# 전체 Step별 흐름은 기존대로 동작합니다.
-
-
-# ---
 # ✅ 공통 CSS 스타일 (전체 화면 배경 및 말풍선 UI 고정)
-# 배경 이미지 URL 안전하게 불러오기
-bg_url = st.session_state.get(
-    "background_image_url",
-    "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
-)
-
-st.markdown(f"""
+st.markdown("""
 <style>
-/* 앱 전체 배경 이미지 설정 */
-[data-testid="stApp"] {{
-    background-image: url('{bg_url}');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}}
-
-/* 앱 컨테이너 기본 설정 */
-html, body, [data-testid="stApp"] {{
+/* 기본 앱 컨테이너 설정 */
+html, body, [data-testid="stApp"] {
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden;
-    background-color: transparent;
-    color: #ffffff;
-}}
+    overflow: hidden; /* 전체 앱 스크롤 방지 */
+    background-color: #1a1a1a; /* 배경 색상 */
+    color: #ffffff; /* 기본 텍스트 색상 */
+}
 
-.main .block-container {{
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    height: 100vh;
-    overflow-y: hidden;
+/* Streamlit 메인 콘텐츠 컨테이너 설정 */
+.main .block-container {
+    padding-top: 0.5rem; /* 여백 최소화 */
+    padding-bottom: 0.5rem; /* 여백 최소화 */
+    height: 100vh; /* 전체 뷰포트 높이 사용, 스크롤 방지 */
+    overflow-y: hidden; /* 이 영역 스크롤 아예 막음 */
     overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}}
+    display: flex; /* 내부 요소 중앙 정렬을 위해 flexbox 사용 */
+    flex-direction: column; /* 세로 정렬 */
+    justify-content: center; /* 세로 중앙 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
+    width: 100%; /* 전체 너비 사용 */
+}
 
-/* 텍스트 및 요소 스타일 */
+/* 텍스트 중앙 정렬 */
 .stMarkdown, .stText, .stAlert, .stSuccess, .stInfo, .stWarning, .stError,
 h1, h2, h3, h4, h5, h6, label, p, .stRadio > label > div, .stCheckbox > label > div,
-div[data-testid^="stMarkdownContainer"] {{
+div[data-testid^="stMarkdownContainer"] { /* st.markdown으로 생성되는 div도 포함 */
     text-align: center !important;
-    width: 100%;
-    font-size: 0.95rem;
-}}
+    width: 100%; /* 중앙 정렬을 위해 너비 100% 확보 */
+    font-size: 0.95rem; /* 글꼴 크기 약간 줄임 */
+}
 
-h3 {{
+h3 { /* 특정 헤더 크기 조정 */
     font-size: 1.2rem !important;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-}}
-
-h4 {{
+}
+h4 {
     font-size: 1.1rem !important;
     margin-top: 0.4rem;
     margin-bottom: 0.4rem;
-}}
+}
 
-/* 입력창 */
-.stTextInput > div > div > input,
-.stTextInput > div > div > input::placeholder {{
+/* 텍스트 입력 필드의 placeholder 텍스트 및 입력된 텍스트 중앙 정렬 */
+.stTextInput > div > div > input::placeholder,
+.stTextInput > div > div > input {
     text-align: center !important;
-    font-size: 0.9rem;
-}}
+    font-size: 0.9rem; /* 입력 필드 텍스트 크기 */
+}
 
-.stTextInput > div > div > input {{
-    height: 40px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #2e2e2e;
-    color: white;
-}}
+/* 선택지 글자 흰색으로 강제 설정 */
+label, .stRadio label, .stMarkdown {
+    color: white !important;
+}
 
-/* 버튼 */
-.stButton>button {{
-    width: 80%;
-    max-width: 300px;
-    padding: 8px 0;
-    margin-top: 10px;
+/* Streamlit 버튼 스타일 조정 및 중앙 정렬 */
+.stButton>button {
+    width: 80%; /* 버튼 너비 조정 */
+    max-width: 300px; /* 최대 너비 설정 */
+    padding: 8px 0; /* 패딩 줄임 */
+    margin-top: 10px; /* 마진 줄임 */
+    display: block; /* 블록 요소로 만들어 margin: auto 적용 가능하게 */
     margin-left: auto;
     margin-right: auto;
-    background-color: #4CAF50;
-    color: white;
+    background-color: #4CAF50; /* 버튼 색상 */
+    color: white; /* 버튼 텍스트 색상 */
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1rem; /* 버튼 글꼴 크기 약간 줄임 */
     font-weight: bold;
-}}
-
-.stButton>button:hover {{
+}
+.stButton>button:hover {
     background-color: #45a049;
-}}
+}
 
-/* 라디오/체크박스 */
-div.stRadio > label,
-div.stCheckbox > label {{
+/* 라디오 버튼 및 체크박스 텍스트 중앙 정렬 */
+div.stRadio > label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 3px 0; /* 라디오 버튼 간격 조절 */
+    font-size: 0.9rem; /* 라디오 버튼 텍스트 크기 */
+}
+
+div.stCheckbox > label {
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 3px 0;
-    font-size: 0.9rem;
-}}
+    font-size: 0.9rem; /* 체크박스 텍스트 크기 */
+}
 
-/* 셀렉트박스 */
-div[data-baseweb="select"] {{
-    background-color: #2e2e2e;
+/* 텍스트 입력창 높이 조절 */
+.stTextInput > div > div > input {
+    height: 40px; /* 높이 조절 */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #2e2e2e; /* 입력창 배경색 */
+    color: white; /* 입력창 텍스트색 */
+}
+
+/* Selectbox 스타일 조정 및 중앙 정렬 (내부 요소 조절) */
+div[data-baseweb="select"] {
+    background-color: #2e2e2e; /* 셀렉트박스 배경색 */
     color: #ffffff;
     border-radius: 8px;
-    width: 80%;
-    max-width: 300px;
+    width: 80%; /* 너비 조정 */
+    max-width: 300px; /* 최대 너비 */
     margin-left: auto;
     margin-right: auto;
-    display: block;
-}}
+    display: block; /* 중앙 정렬을 위해 블록 요소로 */
+}
+div[data-baseweb="select"] * {
+    color: #ffffff; /* 셀렉트박스 내부 텍스트 색상 */
+    fill: #ffffff; /* 아이콘 색상 */
+    font-size: 0.9rem; /* 셀렉트박스 텍스트 크기 */
+}
 
-div[data-baseweb="select"] * {{
-    color: #ffffff;
-    fill: #ffffff;
-    font-size: 0.9rem;
-}}
-
-/* 랭킹표 스타일 */
-.stDataFrame {{
-    max-height: 150px;
+/* 데이터프레임 높이 조절 (랭킹표) */
+.stDataFrame {
+    max-height: 150px; /* 랭킹표 높이 제한 더 줄임 */
     overflow-y: auto;
     margin-left: auto;
     margin-right: auto;
-    display: block;
+    display: block; /* 중앙 정렬을 위해 블록 요소로 */
     border: 1px solid #444;
     border-radius: 8px;
     background-color: #2e2e2e;
-}}
-
-.stDataFrame table th {{
+}
+.stDataFrame table th {
     background-color: #3e3e3e !important;
     color: white !important;
     font-size: 0.85rem;
-}}
-
-.stDataFrame table td {{
+}
+.stDataFrame table td {
     color: white !important;
     font-size: 0.85rem;
-}}
+}
+
 </style>
 """, unsafe_allow_html=True)
+
 
 # ---
 # ✅ show_speech 함수 변경
@@ -291,6 +241,8 @@ def show_speech(title, sub, image_url):
     """
     # 이미지 컨테이너 (CEO 이미지)
     # width를 명시적으로 지정하여 이미지 크기 제어
+    # 이 부분에서 이미지 비율이 깨질 수 있으니, 이미지 소스를 적절히 선택하거나
+    # 원본 이미지를 미리 적절한 크기로 리사이징하는 것이 좋습니다.
     st.image(image_url, width=200, output_format="PNG") # 이미지 너비를 200px로 고정
 
     # 말풍선 (이미지 위에 겹쳐 보이도록 마진 조정)
@@ -320,7 +272,6 @@ def show_speech(title, sub, image_url):
 # ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     show_speech("환영합니다!", "게임을 시작하려면 아래 버튼을 눌러주세요.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     st.markdown("### 경영 시뮬레이션 게임")
     st.markdown("회사를 창업하고 성장시키는 과정을 경험해보세요!")
@@ -331,7 +282,6 @@ if st.session_state.step == 0:
 # ---
 ## Step 1: 업종 선택
 elif st.session_state.step == 1:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 배경 유지
     if not st.session_state.industry_confirmed:
         show_speech("어떤 산업에 뛰어들지 결정할 시간이다.", "네 선택을 보여줘.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
@@ -356,7 +306,6 @@ elif st.session_state.step == 1:
 # ---
 ## Step 2: 회사 이름 입력
 elif st.session_state.step == 2:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 배경 유지
     if not st.session_state.company_name:
         show_speech("이제 회사를 설립할 시간이야.", "멋진 회사 이름을 지어보자!", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
     else:
@@ -370,6 +319,8 @@ elif st.session_state.step == 2:
         name_input = st.text_input("당신의 회사 이름은?", max_chars=20, key="company_name_input") # key 추가
 
     if st.button("회사 이름 확정"):
+        # 이전 코드에서 텍스트 입력창과 세션 상태 변수 이름 불일치 수정
+        # 텍스트 입력창은 'company_name_input' 키로 값을 가져와야 함
         if name_input.strip():
             st.session_state.company_name = name_input.strip()
             st.success("✅ 회사 이름이 등록되었습니다!")
@@ -383,7 +334,6 @@ elif st.session_state.step == 2:
 # ---
 ## Step 3: 전략 선택 (예기치 못한 사건)
 elif st.session_state.step == 3:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1549925203-b09e235a907b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 위험 배경
     show_speech("예기치 못한 사건 발생!", "상황에 적절한 전략을 선택해 회사를 지켜내자.", "https://raw.githubusercontent.com/dddowobbb/simulator1/main/badevent.png")
 
     situations = {
@@ -431,7 +381,6 @@ elif st.session_state.step == 3:
 # ---
 ## Step 4: 결과 분석 및 피드백 (Step 3에 대한)
 elif st.session_state.step == 4:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 배경 유지
     score_earned_this_step = st.session_state.get("step3_score_earned", 0)
     selected_strategy_for_feedback = st.session_state.get("step3_strategy_selected", "선택 없음")
 
@@ -464,7 +413,6 @@ elif st.session_state.step == 4:
 # ---
 ## Step 5: 국가적 위기 대응
 elif st.session_state.step == 5:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1627889759328-ee18d7f457ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 위기 배경 2
     show_speech("국가적 위기 발생!", "경제, 정치, 국제 환경이 급변하고 있어. 대응 전략이 필요해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
 
     crisis_situations = {
@@ -510,7 +458,6 @@ elif st.session_state.step == 5:
 # ---
 ## Step 6: 중간 평가 (국가적 위기 대응에 대한 피드백)
 elif st.session_state.step == 6:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 배경 유지
     score_earned_this_step = st.session_state.get("step5_score_earned", 0)
     selected_strategy_for_feedback = st.session_state.get("step5_strategy_selected", "선택 없음")
 
@@ -539,7 +486,6 @@ elif st.session_state.step == 6:
 # ---
 ## Step 7: 내부 문제 해결 (이전 Step 6)
 elif st.session_state.step == 7:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 배경 유지
     org_issues = {
         "🧠 조직문화 혁신": 10,
         "💰 복지 강화": 8,
@@ -601,7 +547,6 @@ elif st.session_state.step == 7:
 # ---
 ## Step 8: 돌발 변수 등장 (이전 Step 7)
 elif st.session_state.step == 8:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1549925203-b09e235a907b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 위험 배경
     if not st.session_state.random_events_data:
         st.session_state.random_events_data = {
             "📉 글로벌 경제 불황": {
@@ -680,7 +625,6 @@ elif st.session_state.step == 8:
 # ---
 ## Step 9: 마케팅 또는 확장 전략 선택 (이전 Step 8)
 elif st.session_state.step == 9:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1507679799977-c9183b0f5923?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 성장 배경
     # 업종별 적합 전략 정의
     growth_strategies = {
         "💻 IT 스타트업": {
@@ -808,7 +752,6 @@ elif st.session_state.step == 9:
 # ---
 ## Step 10: 연도별 리포트 + 사용자 피드백 (이전 Step 9)
 elif st.session_state.step == 10:
-    st.session_state.background_image_url = "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 배경 유지
     final_score = st.session_state.score
     company_name = st.session_state.company_name
 
@@ -856,30 +799,22 @@ elif st.session_state.step == 11:
     title_bubble = ""
     image_url = ""
 
-    # 최종 점수에 따라 배경 이미지 변경
     if final_score >= 60:
         title_bubble = "글로벌 유니콘 기업 달성!"
         final_message = f"축하합니다, **{company_name}**는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
-        st.session_state.background_image_url = "https://images.unsplash.com/photo-1522204523234-8729aa6d3fd6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 성공 배경
     elif final_score >= 40:
         title_bubble = "안정적 성장!"
         final_message = f"잘하셨습니다, **{company_name}**는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
-        st.session_state.background_image_url = "https://images.unsplash.com/photo-1522204523234-8729aa6d3fd6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 성공 배경
     elif final_score >= 20:
         title_bubble = "재정비의 기회!"
         final_message = f"아쉽게도, **{company_name}**는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
-        st.session_state.background_image_url = "https://images.unsplash.com/photo-1549925203-b09e235a907b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 위험 배경
     else:
         title_bubble = "혹독한 실패..."
         final_message = f"**{company_name}**는 당신의 경영 판단으로 인해 **회생 불능** 상태에 이르렀습니다. 다음 도전에는 더 큰 준비가 필요합니다."
         image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png" # 슬픈 CEO 이미지
-        st.session_state.background_image_url = "https://images.unsplash.com/photo-1627889759328-ee18d7f457ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" # 위험 배경 2
-
-    # 배경 이미지 URL 변경 후 재실행하여 CSS가 업데이트 되도록 함
-    st.rerun() # CSS 업데이트를 위해 즉시 재실행
 
     show_speech(title_bubble, final_message, image_url)
     st.markdown("### Step 11: 최종 평가")
