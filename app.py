@@ -37,6 +37,7 @@ def initialize_session_state():
         "step7_state": "pending",
         "step8_state": "pending",
         "step9_state": "pending",
+        "background_image_url": "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"  # ✅ 새로 추가된 부분
     }
 
     if st.session_state.get("reset_game", False):
@@ -47,8 +48,6 @@ def initialize_session_state():
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value
-
-initialize_session_state()
 
 # ---
 # ✅ 순위 저장 및 출력 함수
