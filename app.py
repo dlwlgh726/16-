@@ -153,8 +153,6 @@ button p {
 .container {
     position: relative;
     width: 100%;
-    height: 100vh;
-    overflow: hidden;
     margin: 0;
     padding: 0;
     background-color: #1a1a1a;
