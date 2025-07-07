@@ -132,7 +132,7 @@ h4 {
 /* 텍스트 입력 필드의 placeholder 텍스트 및 입력된 텍스트 중앙 정렬 */
 .stTextInput > div > div > input::placeholder,
 .stTextInput > div > div > input {
-    text-align: center !important;
+    text-align: center ;
     font-size: 0.9rem; /* 입력 필드 텍스트 크기 */
 }
 
