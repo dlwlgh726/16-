@@ -263,26 +263,25 @@ def show_speech(title: str, subtitle: str, image_url: str):
 # ---
 ## Step 0: 시작 안내
 if st.session_state.step == 0:
-    # ✅ 버튼 포함된 말풍선 UI 직접 구성
-    st.markdown(f"""
-    <div class="container">
-        <img class="bg-image" src="https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png">
-        <div class="speech-bubble">
-            <div class="speech-title">“환영합니다!”</div>
-            <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용 중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
-            <br>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # 말풍선 안에 Streamlit 버튼 포함시키기 위해 columns 사용
+    col1, col2, col3 = st.columns([1, 4, 1])  # 중앙 정렬
 
-    # ✅ 버튼을 Streamlit으로 만들되, 가시성 확보를 위해 padding으로 위로 올리기
-    st.markdown("<div style='height: 350px;'></div>", unsafe_allow_html=True)  # 말풍선 아래 간격 확보
-    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button("게임 시작 ▶️", key="start_button", use_container_width=True):
-        st.session_state.step = 1
-        st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("""
+            <div class="container">
+                <img class="bg-image" src="https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png">
+                <div class="speech-bubble">
+                    <div class="speech-title">“환영합니다!”</div>
+                    <div class="speech-sub">게임 플레이에 앞서 다크모드를 적용 중이시라면 라이트모드로 전환해주시길 바랍니다.</div>
+                </div>
+            </div>
+            <br><br><br>
+        """, unsafe_allow_html=True)
 
+        # ✅ 버튼은 말풍선 바로 아래에서 Streamlit 코드로 출력
+        if st.button("게임 시작 ▶️", use_container_width=True):
+            st.session_state.step = 1
+            st.rerun()
 
 # ---
 ## Step 1: 업종 선택
