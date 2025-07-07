@@ -53,10 +53,10 @@ initialize_session_state()
 
 # ---
 # ✅ 로컬 파일 기반 순위 시스템 함수
-RANK_FILE = "rankings.csv"
+RANK_FILE = "rankings1.csv"
 
 def save_to_ranking(company_name, final_score):
-    """회사명과 점수를 rankings.csv에 저장"""
+    """회사명과 점수를 rankings1.csv에 저장"""
     new_entry = pd.DataFrame([{"company_name": company_name, "score": final_score}])
 
     if os.path.exists(RANK_FILE):
