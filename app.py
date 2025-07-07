@@ -813,7 +813,7 @@ elif st.session_state.step == 10:
     st.markdown("---")
 
     st.markdown("#### 📝 CEO의 피드백")
-    if final_score >= 60:
+    if final_score >= 45:
         st.success("“탁월한 경영! 회사는 눈부신 성장을 이뤘습니다.”")
     elif final_score >= 40:
         st.info("“안정적 성장! 중요한 고비들을 잘 넘겼습니다.”")
