@@ -361,7 +361,7 @@ elif st.session_state.step == 7:
     }
 
     if st.session_state.step7_state == "pending":
-        show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        show_speech("“요즘 직원들 분위기가 심상치 않아...”", "사기 저하, 인사 갈등, 생산성 저하 문제가 보고됐어. 어떻게 대응할까?", "https://raw.githubusercontent.com/dlwlgh726/16-/main/meeting.png")
         st.markdown("### Step 7: 내부 문제 해결 전략 선택")
 
         selected_org_strategy = st.radio("내부 문제를 해결할 전략을 선택하세요:", list(org_issues.keys()))
@@ -431,7 +431,7 @@ elif st.session_state.step == 8:
         }
 
     if st.session_state.step8_state == "pending":
-        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        show_speech("“뜻밖의 일이 벌어졌어!”", "외부 변수로 인해 경영환경이 크게 흔들리고 있어.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/badevent.png")
         st.markdown("### Step 8: 돌발 변수 등장")
 
         if st.session_state.current_event_name is None:
@@ -560,7 +560,7 @@ elif st.session_state.step == 9:
     current_growth_data = growth_strategies.get(current_industry, {"options": [], "best": {}}) # 이름을 current_growth_options에서 current_growth_data로 변경하여 혼동 방지
 
     if st.session_state.step9_state == "pending":
-        show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png")
+        show_speech("“제품이 시장에서 인기를 얻기 시작했어!”", "이제 어떻게 회사를 더욱 성장시킬지 결정해야 해.", "https://raw.githubusercontent.com/dlwlgh726/16-/main/goodevent.png")
 
         st.markdown("### Step 9: 마케팅 또는 확장 전략 선택")
         st.markdown(f"📍 **회사 업종:** {current_industry}")
@@ -669,11 +669,11 @@ elif st.session_state.step == 11:
     if final_score >= 60:
         title_bubble = "“글로벌 유니콘 기업 달성!”"
         final_message = f"축하합니다, {company_name}는 당신의 뛰어난 리더십 아래 **글로벌 유니콘 기업**으로 등극했습니다! 당신은 진정한 비즈니스 영웅입니다."
-        image_url = "applause.png" # 성공 이미지
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
     elif final_score >= 40:
         title_bubble = "“안정적 성장!”"
         final_message = f"잘하셨습니다, {company_name}는 꾸준하고 **안정적인 성장**을 이루었습니다. 시장에서 견고한 입지를 다졌습니다."
-        image_url = "https://raw.githubusercontent.com/dddowobbb/16-1/main/talking%20ceo.png" # 기본 CEO 이미지
+        image_url = "https://raw.githubusercontent.com/dlwlgh726/16-/main/applause.png" # 성공 이미지
     elif final_score >= 20:
         title_bubble = "“재정비의 기회!”"
         final_message = f"아쉽게도, {company_name}는 **존폐 위기**에 처해 있습니다. 중요한 순간에 더 나은 결정을 내렸더라면 좋았을 것입니다."
