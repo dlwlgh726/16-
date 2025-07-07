@@ -224,7 +224,8 @@ def show_speech(title, sub, image_url):
     Streamlit의 레이아웃 흐름을 따르도록 수정
     """
     # 이미지 컨테이너 (CEO 이미지)
-    st.image(image_url, use_column_width=True, output_format="PNG") # 이미지 너비 자동 조절
+    # use_column_width 대신 use_container_width 사용
+    st.image(image_url, use_container_width=True, output_format="PNG") # 이미지 너비 자동 조절
 
     # 말풍선 (이미지 위에 겹쳐 보이도록 마진 조정)
     # Streamlit 컨테이너에 직접 스타일 적용하여 말풍선처럼 보이게 함
@@ -616,7 +617,7 @@ elif st.session_state.step == 9:
                 "글로벌 시장 진출 (초기)": 10,
                 "유사 기업 M&A": 7,
                 "가격 인하": 5,
-                "프리미ум 서비스 전략": 6
+                "프리미엄 서비스 전략": 6
             }
         },
         "🌱 친환경 제품": {
