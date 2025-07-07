@@ -41,12 +41,12 @@ def initialize_session_state():
 
     if st.session_state.get("reset_game", False):
         for key in list(st.session_state.keys()):
-            del st.session_state[key]
+            del st.session_state[[key]]
         st.session_state.reset_game = False
 
     for key, value in defaults.items():
         if key not in st.session_state:
-            st.session_state[key] = value
+            st.session_state[[key]] = value
 
 initialize_session_state()
 
@@ -104,14 +104,14 @@ st.markdown("""
 <style>
 body { background-color: #1a1a1a; color: #ffffff; }
 h1, h2, h3, h4, h5, h6, label, p, span, div { color: inherit; }
-div[data-baseweb="select"] { background-color: #ffffff; color: #000000; }
-div[data-baseweb="select"] * { color: #000000; fill: #000000; }
+div[[data-baseweb="select"]] { background-color: #ffffff; color: #000000; }
+div[[data-baseweb="select"]] * { color: #000000; fill: #000000; }
 button p { color: #000000; font-weight: bold; }
 .container { position: relative; width: 100%; height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #1a1a1a; }
 
-/* 기본 배경 이미지 스타일 (전체 화면) */
+/* 모든 배경 이미지 스타일 (화면 중앙, 꽉 채우기) */
 .bg-image {
-    position: absolute;
+    position: fixed; /* absolute 대신 fixed 사용 */
     top: 0;
     left: 0;
     width: 100%;
@@ -119,17 +119,7 @@ button p { color: #000000; font-weight: bold; }
     object-fit: cover;
     z-index: 0;
 }
-
-/* 첫 번째 특정 이미지 (talking ceo.png)를 위한 중앙 정렬 스타일 */
-.bg-image.centered {
-    position: absolute;
-    left: 0; /* 0으로 변경 */
-    top: 0; /* 0으로 변경 */
-    transform: none; /* transform 제거 */
-    width: 100%; /* 너비를 100%로 */
-    height: 100vh; /* 높이를 화면에 맞추고 */
-    object-fit: cover; /* 비율 유지하며 이미지 전체 보이도록 (공백 없이) */
-}
+/* .bg-image.centered 클래스는 더 이상 필요하지 않으므로 제거 */
 
 .speech-bubble {
     position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
@@ -146,16 +136,16 @@ button p { color: #000000; font-weight: bold; }
 # ✅ 말풍선 출력 함수
 def show_speech(title: str, subtitle: str, image_url: str):
     """말풍선과 배경 이미지를 포함한 UI를 렌더링합니다."""
-    # 특정 이미지 URL에 따라 클래스를 다르게 적용
-    image_class = "bg-image centered" if "talking%20ceo.png" in image_url else "bg-image"
+    # 더 이상 특정 이미지에 따라 클래스를 변경할 필요가 없음
+    image_class = "bg-image"
     st.markdown(f"""
-    <div class="container">
-        <img src="{image_url}" class="{image_class}">
-        <div class="speech-bubble">
-            <div class="speech-title">{title}</div>
-            <div class="speech-sub">{subtitle}</div>
-        </div>
-    </div>
+    
+        
+            
+                {title}
+                {subtitle}
+            
+        
     """, unsafe_allow_html=True)
 
 
@@ -168,6 +158,9 @@ if st.session_state.step == 0:
     if st.button("게임 시작 ▶️"):
         st.session_state.step = 1
         st.rerun()
+
+
+
 
 # ---
 ## Step 1: 업종 선택
