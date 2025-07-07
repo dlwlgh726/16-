@@ -14,30 +14,52 @@ custom_css = """
 }
 
 .stApp {
-    background-image: var(--bg-image); /* JavaScript에서 동적으로 설정될 배경 이미지 URL */
-    background-size: cover; /* 이미지를 화면에 꽉 채우도록 크기 조절 */
-    background-position: center; /* 이미지를 중앙에 배치 */
-    background-repeat: no-repeat; /* 이미지 반복 없음 */
-    min-height: 100vh; /* 앱의 최소 높이를 뷰포트 높이와 같게 설정 */
-    display: flex; /* Flexbox 레이아웃 사용 */
-    flex-direction: column; /* 아이템들을 세로로 정렬 */
-    justify-content: flex-start; /* 아이템들을 상단에 배치 */
-    align-items: center; /* 아이템들을 가로 중앙에 배치 (전역적으로, 필요시 오버라이드) */
-    padding-top: 20px; /* 상단 여백 */
-    position: relative; /* 자식 요소의 absolute 위치 기준점 */
-    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 허용 */
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 20px;
+    position: relative;
+    overflow-y: auto;
+}
+
+/* ✅ 배경 이미지를 모니터 전체에 꽉 채우도록 */
+.bg-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* (선택) 중앙 정렬 전용 배경 이미지 */
+.bg-image.centered {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: 100vh;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 /* Streamlit 메인 콘텐츠 블록에 투명한 배경과 패딩 추가 */
-/* 배경 이미지를 덮지 않고 투명하게 유지하면서 내부 콘텐츠를 감쌈 */
 .main .block-container {
-    background-color: rgba(0, 0, 0, 0); /* 완전 투명 */
+    background-color: rgba(0, 0, 0, 0);
     padding-top: 0rem;
     padding-right: 1rem;
     padding-left: 1rem;
     padding-bottom: 1rem;
-    width: 100%; /* 너비를 꽉 채우도록 설정 */
-    max-width: 100%; /* 최대 너비도 100% */
+    width: 100%;
+    max-width: 100%;
 }
 
 /* Streamlit 헤더와 푸터 숨기기 */
@@ -49,60 +71,72 @@ footer {
     visibility: hidden;
     height: 0px !important;
 }
-.st-emotion-cache-cio0dv { /* "Made with Streamlit" 워터마크 숨김 */
+.st-emotion-cache-cio0dv {
     visibility: hidden;
 }
 
 /* 말풍선 스타일 */
 .speech-bubble {
-    /* 원래 위치를 유지 */
-    position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
-    width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
-    padding: 20px 25px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-align: center; z-index: 100; /* 배경 이미지보다 위에 오도록 z-index를 높게 설정 */
-    backdrop-filter: blur(8px); /* 블러 효과로 배경 가독성 향상 */
-    -webkit-backdrop-filter: blur(8px); /* Safari 지원 */
+    position: absolute;
+    bottom: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
-.speech-title { font-size: 1.4rem; font-weight: bold; color: #ffffff; }
-.speech-sub { margin-top: 10px; font-size: 1rem; color: #f0f0f0; }
+.speech-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+.speech-sub {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #f0f0f0;
+}
 
-/* Streamlit 위젯 스타일 오버라이드 (가독성 향상) */
-/* 모든 라벨 텍스트 기본 색상 흰색으로 설정 */
+/* 위젯 스타일 오버라이드 */
 label {
     color: #ffffff !important;
 }
 p {
-    color: #ffffff !important; /* 일반 텍스트도 흰색으로 */
-}
-
-/* selectbox 드롭다운 배경색 */
-div[data-baseweb="select"] > div { /* selectbox 컨테이너 */
-    background-color: rgba(0, 0, 0, 0.6) !important; /* 반투명 검정 */
-    border-radius: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* 연한 테두리 */
-}
-div[data-baseweb="select"] > div > div > div { /* 선택된 값 텍스트 색상 */
     color: #ffffff !important;
 }
-/* 드롭다운 메뉴 (옵션 목록) */
+
+/* selectbox 스타일 */
+div[data-baseweb="select"] > div {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+div[data-baseweb="select"] > div > div > div {
+    color: #ffffff !important;
+}
 div[data-baseweb="popover"] > div > div {
-    background-color: rgba(0, 0, 0, 0.8) !important; /* 드롭다운 메뉴 배경 */
+    background-color: rgba(0, 0, 0, 0.8) !important;
     color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 5px;
 }
-div[data-baseweb="popover"] > div > div * { /* 드롭다운 메뉴 내부 텍스트 */
+div[data-baseweb="popover"] > div > div * {
     color: #ffffff !important;
 }
-div[data-baseweb="popover"] li:hover { /* 드롭다운 메뉴 호버 시 */
+div[data-baseweb="popover"] li:hover {
     background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-
-/* 라디오 버튼 텍스트 색상 */
+/* 라디오 버튼 */
 div.stRadio > label {
-    background-color: rgba(0, 0, 0, 0.6) !important; /* 반투명 검정 */
-    color: #ffffff !important; /* 텍스트 흰색 */
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    color: #ffffff !important;
     border-radius: 5px;
     padding: 5px 10px;
     margin-bottom: 5px;
@@ -114,31 +148,29 @@ div.stRadio > label:hover {
 div.stRadio > label > div > p {
     color: #ffffff !important;
 }
-div.stRadio > label > div > input:checked + div { /* 선택된 라디오 버튼 원 안의 색 */
+div.stRadio > label > div > input:checked + div {
     background-color: #6c5ce7 !important;
     border-color: #6c5ce7 !important;
 }
 
-/* 텍스트 입력창 배경색 및 텍스트 색상 */
-div.stTextInput > div > div { /* 바깥쪽 컨테이너 */
-    background-color: rgba(0, 0, 0, 0.6) !important; /* 반투명 검정 */
+/* 텍스트 입력창 */
+div.stTextInput > div > div {
+    background-color: rgba(0, 0, 0, 0.6) !important;
     border-radius: 5px;
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
-div.stTextInput input { /* 실제 입력 필드 */
-    color: #ffffff !important; /* 입력 텍스트 흰색 */
-    background-color: transparent !important; /* 내부 입력 필드 투명 */
+div.stTextInput input {
+    color: #ffffff !important;
+    background-color: transparent !important;
 }
 
 /* 버튼 스타일 */
-/* Streamlit 1.x 버전에서는 button 클래스가 동적으로 변경될 수 있으므로,
-   가장 바깥쪽 div에 있는 button 태그를 선택하는 것이 가장 안전합니다. */
 button[data-testid*="stButton"] > div > p {
-    color: #ffffff !important; /* 버튼 텍스트 색상 */
+    color: #ffffff !important;
     font-weight: bold;
 }
-button[data-testid*="stButton"] { /* 버튼 실제 요소 */
-    background-color: #6c5ce7; /* 보라색 계열 */
+button[data-testid*="stButton"] {
+    background-color: #6c5ce7;
     color: white;
     border-radius: 8px;
     padding: 10px 20px;
@@ -149,22 +181,20 @@ button[data-testid*="stButton"] { /* 버튼 실제 요소 */
     margin-top: 10px;
 }
 button[data-testid*="stButton"]:hover {
-    background-color: #5a4ac3; /* 호버 시 색상 변경 */
+    background-color: #5a4ac3;
 }
 
-/* 에러 메시지 텍스트 색상 */
-.st-emotion-cache-1f06x3d p { /* Streamlit error 메시지 클래스 */
+/* 에러 메시지 텍스트 */
+.st-emotion-cache-1f06x3d p {
     color: red !important;
 }
-
 </style>
 """
 
-# Streamlit 앱 시작 시 CSS 적용
+# --- CSS 적용 ---
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# --- JavaScript를 사용하여 동적으로 배경 이미지 설정 ---
-# 이 함수는 .stApp의 --bg-image CSS 변수를 변경하여 배경 이미지를 설정합니다.
+# --- 배경 이미지 설정 함수 ---
 def set_background_image(image_url):
     js_code = f"""
     <script>
@@ -172,6 +202,7 @@ def set_background_image(image_url):
     </script>
     """
     st.markdown(js_code, unsafe_allow_html=True)
+
 
 # ✅ 세션 상태 초기화 함수
 def initialize_session_state():
